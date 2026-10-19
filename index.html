@@ -12,11 +12,12 @@
   <a href="index.html" class="nav-brand">SDD · Claude Code</a>
   <ul class="nav-links">
     <li><a href="index.html">Home</a></li>
-    <li><a href="global.html">Global Setup</a></li>
+    <li><a href="global.html">Setup</a></li>
     <li><a href="new-project.html">New Project</a></li>
     <li><a href="existing-project.html">Existing Project</a></li>
     <li><a href="workflow.html">Workflow</a></li>
     <li><a href="skills.html">Skills</a></li>
+    <li><a href="agents.html">Agents</a></li>
   </ul>
 </nav>
 
@@ -25,43 +26,104 @@
     <div class="eyebrow">Reference · Claude Code</div>
     <h1 class="page-title">Spec-Driven<br><em class="t1">Development</em></h1>
     <div class="page-subtitle">
-      <span><span class="dot" style="background:var(--c1)"></span>6 reusable skills</span>
-      <span><span class="dot" style="background:var(--c2)"></span>Research → Plan → Implement</span>
-      <span><span class="dot" style="background:var(--c3)"></span>Parallel worktree execution</span>
-      <span><span class="dot" style="background:var(--c4)"></span>STATE.md + hash anchoring</span>
+      <span><span class="dot" style="background:var(--c1)"></span>6 skills · 2 agents</span>
+      <span><span class="dot" style="background:var(--c2)"></span>Spec → Implement → Validate</span>
+      <span><span class="dot" style="background:var(--c3)"></span>One fresh agent per task</span>
+      <span><span class="dot" style="background:var(--c4)"></span>Independent review</span>
     </div>
   </div>
 
   <div class="divider">What is SDD</div>
 
-  <p style="font-size:14px; color:var(--mute2); line-height:1.8; max-width:680px;">
-    Spec-Driven Development is a workflow for AI-assisted coding where <strong style="color:var(--text)">no code is written until a spec is approved</strong>.
-    Every feature starts with requirements, moves through design (including explicit stack gap detection),
-    then breaks into atomic tasks. Claude Code executes the tasks — you review the decisions.
-    STATE.md with a git hash anchor keeps the whole team in sync, even with peers who don't use AI tooling.
+  <p style="font-size:14px; color:var(--mute2); line-height:1.8; max-width:720px;">
+    Spec-Driven Development is a way of working with Claude Code where <strong style="color:var(--text)">no feature code is written until you've approved a spec</strong>.
+    Every feature goes through requirements, a design that's checked against your current stack, and a list of small tasks that each name a check to run.
+    Claude then builds it one task at a time. <strong style="color:var(--text)">Your main conversation coordinates, and separate agents do the heavy lifting</strong>:
+    they research the codebase, build each task with a clean slate, and give an independent verdict at the end.
+    STATE.md, anchored to a git commit, records where every feature stands, even when teammates don't use Claude.
   </p>
 
-  <div class="divider">The RPI Loop</div>
+  <div class="divider">The loop</div>
 
   <div class="flow-ribbon">
     <div class="flow-node">
-      <div class="flow-pill p2">Research</div>
-      <div class="flow-label">read codebase</div>
+      <div class="flow-pill p2">Spec</div>
+      <div class="flow-label">✋ you approve 3×</div>
     </div>
     <div class="flow-gate">→</div>
     <div class="flow-node">
-      <div class="flow-pill p6">Plan</div>
-      <div class="flow-label">✋ you approve</div>
+      <div class="flow-pill p0">Commit + /clear</div>
+      <div class="flow-label">fresh context</div>
     </div>
     <div class="flow-gate">→</div>
     <div class="flow-node">
       <div class="flow-pill p3">Implement</div>
-      <div class="flow-label">claude executes</div>
+      <div class="flow-label">1 agent per task</div>
     </div>
     <div class="flow-gate">→</div>
     <div class="flow-node">
       <div class="flow-pill p4">Validate</div>
-      <div class="flow-label">✋ you approve</div>
+      <div class="flow-label">independent reviewer</div>
+    </div>
+  </div>
+
+  <div class="divider">Who does what</div>
+
+  <div class="three-col">
+    <div class="cond ok" style="border-left:3px solid var(--c0);">
+      <div class="cond-label" style="color:var(--c0)">You</div>
+      <div class="cond-text">Start each skill with a slash command. Answer questions, choose between stack options, and approve each spec phase and the implementation plan. Merge branches.</div>
+    </div>
+    <div class="cond ok" style="border-left:3px solid var(--c1);">
+      <div class="cond-label" style="color:var(--c1)">Main conversation</div>
+      <div class="cond-text">Runs the skill, asks you questions, writes the spec, plans the work, hands out tasks, runs each task's check, commits, and keeps tasks.md and STATE.md current.</div>
+    </div>
+    <div class="cond ok" style="border-left:3px solid var(--c3);">
+      <div class="cond-label" style="color:var(--c3)">Agents</div>
+      <div class="cond-text"><strong style="color:var(--text)">Explore</strong> researches the codebase. <strong style="color:var(--text)">sdd-implementer</strong> builds one task. <strong style="color:var(--text)">sdd-reviewer</strong> checks the result against the spec. Each starts with a clean slate and reports back a short summary.</div>
+    </div>
+  </div>
+
+  <div class="infobox info">
+    <strong>Why agents?</strong> Claude's working memory (its context) fills up as it reads files and runs commands, and quality drops as it fills.
+    Handing research and each task to a separate agent keeps the main conversation small. A reviewer that never saw the implementation also judges it without bias.
+    <a href="agents.html">More on the agents →</a>
+  </div>
+
+  <div class="divider">Folder map</div>
+
+  <div class="two-col">
+    <div>
+      <div class="code-block"><span class="cm"># once per machine (Setup page)</span>
+<span class="ck">~/.claude/</span>
+<span class="cv">├── CLAUDE.md</span>               <span class="cm">your preferences</span>
+<span class="cv">├── skills/</span>
+<span class="cv">│   ├── sdd-startup/</span><span class="cw">SKILL.md</span>
+<span class="cv">│   ├── sdd-bootstrap/</span><span class="cw">SKILL.md</span>
+<span class="cv">│   ├── sdd-checkup/</span><span class="cw">SKILL.md</span>
+<span class="cv">│   ├── sdd-feature/</span><span class="cw">SKILL.md</span>
+<span class="cv">│   ├── sdd-implement/</span><span class="cw">SKILL.md</span>
+<span class="cv">│   └── sdd-validate/</span><span class="cw">SKILL.md</span>
+<span class="cv">└── agents/</span>
+<span class="cv">    ├── </span><span class="cw">sdd-implementer.md</span>
+<span class="cv">    └── </span><span class="cw">sdd-reviewer.md</span></div>
+    </div>
+    <div>
+      <div class="code-block"><span class="cm"># in each project (generated by the skills)</span>
+<span class="ck">my-project/</span>
+<span class="cv">├── CLAUDE.md</span>               <span class="cm">stack · commands · rules</span>
+<span class="cv">├── STATE.md</span>                <span class="cm">feature status + commit</span>
+<span class="cv">├── .claude/</span>
+<span class="cv">│   ├── steering/</span>
+<span class="cv">│   │   ├── product.md</span>      <span class="cm">what and who</span>
+<span class="cv">│   │   ├── tech.md</span>         <span class="cm">stack decisions</span>
+<span class="cv">│   │   └── structure.md</span>    <span class="cm">where code lives</span>
+<span class="cv">│   └── settings.json</span>       <span class="cm">optional, for parallel</span>
+<span class="cv">└── specs/</span>
+<span class="cv">    └── csv-export/</span>
+<span class="cv">        ├── requirements.md</span>
+<span class="cv">        ├── design.md</span>
+<span class="cv">        └── </span><span class="cg">tasks.md</span>          <span class="cm">tasks + checks</span></div>
     </div>
   </div>
 
@@ -70,37 +132,44 @@
   <div class="nav-cards">
 
     <a href="global.html" class="nav-card nc1">
-      <div class="nc-eyebrow">Step 0 — Once ever</div>
-      <div class="nc-title">Global Setup</div>
-      <div class="nc-desc">Configure your personal ~/.claude/CLAUDE.md, install skills, choose your default model. Applies to every project on your machine.</div>
+      <div class="nc-eyebrow">Step 0 · Once per machine</div>
+      <div class="nc-title">Setup</div>
+      <div class="nc-desc">Install the skills and agents with one command, add your personal CLAUDE.md, and pick models.</div>
       <div class="nc-arrow">→</div>
     </a>
 
     <a href="new-project.html" class="nav-card nc6">
-      <div class="nc-eyebrow">Greenfield</div>
+      <div class="nc-eyebrow">New project</div>
       <div class="nc-title">New Project</div>
-      <div class="nc-desc">Starting from scratch. /sdd-startup guides you through purpose → stack trade-offs → steering docs. No code until decisions are confirmed.</div>
+      <div class="nc-desc">No code yet. /sdd-startup walks you through purpose and stack trade-offs, then writes the project's context files.</div>
       <div class="nc-arrow">→</div>
     </a>
 
     <a href="existing-project.html" class="nav-card nc7">
-      <div class="nc-eyebrow">Brownfield</div>
+      <div class="nc-eyebrow">Existing project</div>
       <div class="nc-title">Existing Project</div>
-      <div class="nc-desc">Codebase already exists. /sdd-checkup audits health, /sdd-bootstrap reverse-engineers CLAUDE.md and steering docs from what's there.</div>
+      <div class="nc-desc">Code already exists. /sdd-checkup audits what's there, and /sdd-bootstrap writes the context files from the code.</div>
       <div class="nc-arrow">→</div>
     </a>
 
     <a href="workflow.html" class="nav-card nc2">
-      <div class="nc-eyebrow">The Recipe</div>
-      <div class="nc-title">Full Workflow</div>
-      <div class="nc-desc">Session-by-session recipe. Spec → Implement → Validate. Includes parallel worktree execution for multiple features simultaneously.</div>
+      <div class="nc-eyebrow">Day to day</div>
+      <div class="nc-title">Workflow</div>
+      <div class="nc-desc">What to type, and when: spec a feature, implement it task by task, validate it, and run features in parallel.</div>
       <div class="nc-arrow">→</div>
     </a>
 
     <a href="skills.html" class="nav-card nc3">
       <div class="nc-eyebrow">Reference</div>
-      <div class="nc-title">All Skills</div>
-      <div class="nc-desc">Read the full SKILL.md for every skill: sdd-startup, sdd-bootstrap, sdd-checkup, sdd-feature, sdd-implement, sdd-validate.</div>
+      <div class="nc-title">Skills</div>
+      <div class="nc-desc">Read the full SKILL.md of every skill, with arguments and what each one writes.</div>
+      <div class="nc-arrow">→</div>
+    </a>
+
+    <a href="agents.html" class="nav-card nc4">
+      <div class="nc-eyebrow">Reference</div>
+      <div class="nc-title">Agents</div>
+      <div class="nc-desc">How the coordinator delegates work to sdd-implementer, sdd-reviewer and the built-in Explore agent.</div>
       <div class="nc-arrow">→</div>
     </a>
 
@@ -111,38 +180,39 @@
   <div class="skill-grid">
     <div class="skill-card sc6">
       <div class="skill-card-name">/sdd-startup</div>
-      <div class="skill-card-desc">Greenfield only. Elicits project purpose and guides stack decisions via structured trade-off conversation.</div>
-      <div class="skill-card-invoke">invoke → new project, no code yet</div>
-    </div>
-    <div class="skill-card sc1">
-      <div class="skill-card-name">/sdd-bootstrap</div>
-      <div class="skill-card-desc">Existing codebase. Reverse-engineers CLAUDE.md and steering docs. Asks before inventing anything.</div>
-      <div class="skill-card-invoke">invoke → once per project</div>
+      <div class="skill-card-desc">New projects only. Interviews you about the project, then walks through each stack decision with trade-offs.</div>
+      <div class="skill-card-invoke">/sdd-startup [idea] · once per project</div>
     </div>
     <div class="skill-card sc7">
       <div class="skill-card-name">/sdd-checkup</div>
-      <div class="skill-card-desc">Audits project health: context files, STATE.md drift, orphaned specs, desynced metadata. Reports first, fixes after approval.</div>
-      <div class="skill-card-invoke">invoke → any dormant or unfamiliar project</div>
+      <div class="skill-card-desc">Audits an existing project: context files, STATE.md drift, orphaned specs, old task formats, missing agents. Reports before changing anything.</div>
+      <div class="skill-card-invoke">/sdd-checkup · any unfamiliar project</div>
+    </div>
+    <div class="skill-card sc1">
+      <div class="skill-card-name">/sdd-bootstrap</div>
+      <div class="skill-card-desc">Existing code without context files. Maps the code with parallel Explore agents and records what's there, without inventing decisions.</div>
+      <div class="skill-card-invoke">/sdd-bootstrap · once per project</div>
     </div>
     <div class="skill-card sc2">
       <div class="skill-card-name">/sdd-feature</div>
-      <div class="skill-card-desc">Requirements → Design (with stack gap detection) → Tasks. Three human approval gates before any code.</div>
-      <div class="skill-card-invoke">invoke → before implementing any feature</div>
+      <div class="skill-card-desc">Requirements → design (stack-gap check) → tasks with checks. You approve each phase. No code.</div>
+      <div class="skill-card-invoke">/sdd-feature &lt;name&gt; [description]</div>
     </div>
     <div class="skill-card sc3">
       <div class="skill-card-name">/sdd-implement</div>
-      <div class="skill-card-desc">Implements one or multiple features. Audits overlap, proposes parallel worktree or sequential execution, presents plan first.</div>
-      <div class="skill-card-invoke">invoke → after tasks.md is approved</div>
+      <div class="skill-card-desc">Coordinates the build: one sdd-implementer agent per task, then a check, a commit and a tick for each. Several features can run in parallel worktrees.</div>
+      <div class="skill-card-invoke">/sdd-implement &lt;feature&gt; [and &lt;feature&gt;…]</div>
     </div>
     <div class="skill-card sc4">
       <div class="skill-card-name">/sdd-validate</div>
-      <div class="skill-card-desc">Verifies spec conformance, updates steering docs, marks STATE.md, updates CHANGELOG/README/package.json. Fresh session only.</div>
-      <div class="skill-card-invoke">invoke → after all tasks complete</div>
+      <div class="skill-card-desc">sdd-reviewer gives a pass/fail verdict per acceptance criterion. Then it updates the steering docs, STATE.md, CHANGELOG, README and version.</div>
+      <div class="skill-card-invoke">/sdd-validate &lt;feature&gt;</div>
     </div>
   </div>
 
 </div>
 
+<script src="scripts/skills-data.js"></script>
 <script src="scripts/nav.js"></script>
 </body>
 </html>

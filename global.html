@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Global Setup — SDD</title>
+<title>Setup — SDD</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -12,52 +12,123 @@
   <a href="index.html" class="nav-brand">SDD · Claude Code</a>
   <ul class="nav-links">
     <li><a href="index.html">Home</a></li>
-    <li><a href="global.html">Global Setup</a></li>
+    <li><a href="global.html">Setup</a></li>
     <li><a href="new-project.html">New Project</a></li>
     <li><a href="existing-project.html">Existing Project</a></li>
     <li><a href="workflow.html">Workflow</a></li>
     <li><a href="skills.html">Skills</a></li>
+    <li><a href="agents.html">Agents</a></li>
   </ul>
 </nav>
 
 <div class="page">
   <div class="page-header">
-    <div class="eyebrow">Step 0 — Once ever</div>
-    <h1 class="page-title">Global<br><em class="t1">Setup</em></h1>
+    <div class="eyebrow">Step 0 · Once per machine</div>
+    <h1 class="page-title">Machine<br><em class="t1">Setup</em></h1>
     <div class="page-subtitle">
+      <span><span class="dot" style="background:var(--c1)"></span>Install skills + agents</span>
       <span><span class="dot" style="background:var(--c0)"></span>~/.claude/CLAUDE.md</span>
-      <span><span class="dot" style="background:var(--c1)"></span>Skills install</span>
       <span><span class="dot" style="background:var(--c3)"></span>Model selection</span>
     </div>
   </div>
 
-  <!-- ACCORDION -->
   <div class="accordion">
 
-    <!-- GLOBAL CLAUDE.MD -->
-    <div class="acc-card stripe-0" onclick="toggleAcc(this)">
+    <!-- INSTALL -->
+    <div class="acc-card stripe-1" onclick="toggleAcc(this)">
       <div class="acc-header">
-        <div class="acc-tag">G·01</div>
+        <div class="acc-tag">S·01</div>
         <div class="acc-meta">
-          <div class="acc-title">~/.claude/CLAUDE.md</div>
-          <div class="acc-desc">Personal preferences — applies to every project on your machine, forever</div>
+          <div class="acc-title">Install skills and agents</div>
+          <div class="acc-desc">One command · 6 skills into ~/.claude/skills/ · 2 agents into ~/.claude/agents/</div>
         </div>
         <div class="acc-toggle">+</div>
       </div>
       <div class="acc-body">
         <div class="chips">
-          <span class="chip ok">set once</span>
-          <span class="chip ok">applies to all projects</span>
-          <span class="chip warn">do not declare OS or versions</span>
+          <span class="chip ok">re-run any time to update</span>
+          <span class="chip ok">doesn't touch your CLAUDE.md</span>
+          <span class="chip info">downloads from github.com/caiogmatos/sdd-skills</span>
+        </div>
+
+        <div class="two-col">
+          <div>
+            <div class="cmd">
+              <div class="cmd-head"><span>Windows · PowerShell</span><button class="copy-btn" data-copy-target="install-ps">copy</button></div>
+              <pre class="code-block" id="install-ps">$base = "https://raw.githubusercontent.com/caiogmatos/sdd-skills/main"
+foreach ($n in "startup", "bootstrap", "checkup", "feature", "implement", "validate") {
+  New-Item -ItemType Directory -Force "$HOME\.claude\skills\sdd-$n" | Out-Null
+  Invoke-WebRequest "$base/skills/sdd-$n/SKILL.md" -OutFile "$HOME\.claude\skills\sdd-$n\SKILL.md" -UseBasicParsing
+}
+New-Item -ItemType Directory -Force "$HOME\.claude\agents" | Out-Null
+foreach ($a in "sdd-implementer", "sdd-reviewer") {
+  Invoke-WebRequest "$base/agents/$a.md" -OutFile "$HOME\.claude\agents\$a.md" -UseBasicParsing
+}</pre>
+            </div>
+            <div class="cmd">
+              <div class="cmd-head"><span>macOS · Linux · WSL</span><button class="copy-btn" data-copy-target="install-sh">copy</button></div>
+              <pre class="code-block" id="install-sh">base=https://raw.githubusercontent.com/caiogmatos/sdd-skills/main
+for n in startup bootstrap checkup feature implement validate; do
+  mkdir -p ~/.claude/skills/sdd-$n
+  curl -fsSL "$base/skills/sdd-$n/SKILL.md" -o ~/.claude/skills/sdd-$n/SKILL.md
+done
+mkdir -p ~/.claude/agents
+for a in sdd-implementer sdd-reviewer; do
+  curl -fsSL "$base/agents/$a.md" -o ~/.claude/agents/$a.md
+done</pre>
+            </div>
+          </div>
+          <div>
+            <div class="steps" style="margin-top:0;">
+              <div class="step"><span class="step-n sn1">01</span><div class="step-text"><strong>Run the command</strong> for your system. On Windows that puts the files in <code>C:\Users\&lt;you&gt;\.claude\</code>. In WSL, run the macOS/Linux version inside WSL. WSL has its own <code>~/.claude/</code>.</div></div>
+              <div class="step"><span class="step-n sn1">02</span><div class="step-text"><strong>No restart needed</strong> in most cases: Claude Code picks up new skills and agents in the running session. If <code>~/.claude/skills/</code> or <code>~/.claude/agents/</code> didn't exist before, run <code>/reload-skills</code> for the skills and start a new session for the agents.</div></div>
+              <div class="step"><span class="step-n sn1">03</span><div class="step-text"><strong>Check the skills</strong>: type <code>/sdd</code> and all six should autocomplete.</div></div>
+              <div class="step"><span class="step-n sn1">04</span><div class="step-text"><strong>Check the agents</strong>: ask Claude <em>"which custom agents do you have?"</em> It should list sdd-implementer and sdd-reviewer.</div></div>
+            </div>
+            <div class="infobox warn">
+              <strong>Installing by hand?</strong> Each skill must be a folder containing a file named exactly <code>SKILL.md</code>, e.g. <code>~/.claude/skills/sdd-feature/SKILL.md</code>. The download buttons on the <a href="skills.html">Skills</a> page save files as <code>sdd-feature-SKILL.md</code> so they don't overwrite each other, so rename each one. Agent files keep their names: <code>~/.claude/agents/sdd-implementer.md</code>.
+            </div>
+          </div>
+        </div>
+
+        <div class="code-block" style="margin-top:16px;"><span class="ck">~/.claude/</span>
+<span class="cv">├── skills/</span>
+<span class="cv">│   ├── sdd-startup/</span><span class="cw">SKILL.md</span>       <span class="cm">← /sdd-startup</span>
+<span class="cv">│   ├── sdd-bootstrap/</span><span class="cw">SKILL.md</span>     <span class="cm">← /sdd-bootstrap</span>
+<span class="cv">│   ├── sdd-checkup/</span><span class="cw">SKILL.md</span>       <span class="cm">← /sdd-checkup</span>
+<span class="cv">│   ├── sdd-feature/</span><span class="cw">SKILL.md</span>       <span class="cm">← /sdd-feature</span>
+<span class="cv">│   ├── sdd-implement/</span><span class="cw">SKILL.md</span>     <span class="cm">← /sdd-implement</span>
+<span class="cv">│   └── sdd-validate/</span><span class="cw">SKILL.md</span>      <span class="cm">← /sdd-validate</span>
+<span class="cv">└── agents/</span>
+<span class="cv">    ├── </span><span class="cw">sdd-implementer.md</span>          <span class="cm">← used by /sdd-implement</span>
+<span class="cv">    └── </span><span class="cw">sdd-reviewer.md</span>             <span class="cm">← used by /sdd-validate</span></div>
+      </div>
+    </div>
+
+    <!-- GLOBAL CLAUDE.MD -->
+    <div class="acc-card stripe-0" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <div class="acc-tag">S·02</div>
+        <div class="acc-meta">
+          <div class="acc-title">~/.claude/CLAUDE.md</div>
+          <div class="acc-desc">Your personal preferences · loaded in every project on this machine</div>
+        </div>
+        <div class="acc-toggle">+</div>
+      </div>
+      <div class="acc-body">
+        <div class="chips">
+          <span class="chip ok">set once, edit as you learn</span>
+          <span class="chip warn">keep it short: it's loaded every session</span>
+          <span class="chip warn">don't declare OS or versions</span>
         </div>
         <div class="two-col">
           <div>
             <div class="steps">
-              <div class="step"><span class="step-n sn0">✓</span><div class="step-text"><strong>Communication style</strong> — one question at a time, wait for approval before executing</div></div>
-              <div class="step"><span class="step-n sn0">✓</span><div class="step-text"><strong>Code style</strong> — functional over OOP, explicit over implicit, no silent fallbacks</div></div>
-              <div class="step"><span class="step-n sn0">✓</span><div class="step-text"><strong>SDD defaults</strong> — never write code before a spec exists, suggest /sdd-checkup if context files are missing</div></div>
-              <div class="step"><span class="step-n sn0">✓</span><div class="step-text"><strong>Design decisions</strong> — flag any tech not in current stack, present options with trade-offs, wait for decision</div></div>
-              <div class="step"><span class="step-n sn-x">✗</span><div class="step-text" style="color:#ef4444;"><strong>Do NOT declare</strong> — OS, Node/Python version, package manager, shell. Claude detects these automatically.</div></div>
+              <div class="step"><span class="step-n sn0">✓</span><div class="step-text"><strong>Communication</strong>: one question at a time, multiple-choice questions where possible, wait for approval before executing a plan</div></div>
+              <div class="step"><span class="step-n sn0">✓</span><div class="step-text"><strong>Code style</strong>: functional over OOP, explicit over implicit, no silent fallbacks</div></div>
+              <div class="step"><span class="step-n sn0">✓</span><div class="step-text"><strong>Workflow</strong>: atomic commits, and show evidence (the command and its result) when claiming something works</div></div>
+              <div class="step"><span class="step-n sn0">✓</span><div class="step-text"><strong>SDD</strong>: specs for features and multi-file changes, but not for one-line fixes; flag stack gaps; use agents for broad research</div></div>
+              <div class="step"><span class="step-n sn-x">✗</span><div class="step-text"><strong>Leave out</strong> what Claude detects itself (OS, runtime versions, package manager, shell) and project-specific rules, which go in the project's CLAUDE.md.</div></div>
             </div>
           </div>
           <div>
@@ -65,129 +136,54 @@
               <div class="skill-icon">◉</div>
               <div class="skill-meta">
                 <div class="skill-name">~/.claude/CLAUDE.md</div>
-                <div class="skill-hint">click to read full template</div>
+                <div class="skill-hint">read the template · copy · download</div>
               </div>
             </button>
-            <div class="code-block" style="margin-top:12px;"><span class="ck"># Communication</span>
-<span class="cv">- Ask questions one at a time</span>
-<span class="cv">- Wait for approval before executing</span>
-
-<span class="ck"># Code Style</span>
-<span class="cv">- Functional over OOP</span>
-<span class="cv">- Explicit — no silent fallbacks</span>
-
-<span class="ck"># SDD Defaults</span>
-<span class="cv">- No code before spec exists</span>
-<span class="cv">- Flag stack gaps before design.md</span>
-<span class="cv">- Suggest /sdd-checkup if context</span>
-<span class="cv">  files are missing</span>
-
-<span class="ck"># Design Decisions</span>
-<span class="cv">- Cross-ref tech.md before design</span>
-<span class="cv">- Flag missing tech, present options</span>
-<span class="cv">- Never default silently</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SKILLS INSTALL -->
-    <div class="acc-card stripe-1" onclick="toggleAcc(this)">
-      <div class="acc-header">
-        <div class="acc-tag">G·02</div>
-        <div class="acc-meta">
-          <div class="acc-title">Install Skills</div>
-          <div class="acc-desc">~/.claude/skills/ — one subfolder per skill, file must be named SKILL.md</div>
-        </div>
-        <div class="acc-toggle">+</div>
-      </div>
-      <div class="acc-body">
-        <div class="chips">
-          <span class="chip warn">folder name = slash command name</span>
-          <span class="chip warn">file must be named exactly SKILL.md</span>
-          <span class="chip ok">no restart needed — picked up live</span>
-        </div>
-        <div class="two-col">
-          <div>
-            <div class="steps" style="margin-top:16px;">
-              <div class="step"><span class="step-n sn1">01</span><div class="step-text"><strong>Windows path</strong> — C:\Users\&lt;Name&gt;\.claude\skills\</div></div>
-              <div class="step"><span class="step-n sn1">02</span><div class="step-text"><strong>WSL path</strong> — ~/.claude/skills/ (prefer this over /mnt/c/)</div></div>
-              <div class="step"><span class="step-n sn1">03</span><div class="step-text"><strong>One folder per skill</strong> — e.g. skills/sdd-startup/SKILL.md</div></div>
-              <div class="step"><span class="step-n sn1">04</span><div class="step-text"><strong>Rename downloads</strong> — the download button saves sdd-[name]-SKILL.md; move each into its folder as SKILL.md (or run the command below)</div></div>
-              <div class="step"><span class="step-n sn1">05</span><div class="step-text"><strong>No restart needed</strong> — changes are picked up live. Only if ~/.claude/skills/ didn't exist when the session started, run /reload-skills</div></div>
-              <div class="step"><span class="step-n sn1">06</span><div class="step-text"><strong>Verify</strong> — type / and your skill names should autocomplete</div></div>
+            <div class="infobox info">
+              The install command doesn't create this file, so it can't overwrite one you already have. Copy the template, then <strong>edit the Code style section</strong>. It holds one person's preferences, not SDD rules.
             </div>
-            <div class="code-block" style="margin-top:16px;"><span class="cm"># Windows (PowerShell) — after downloading all six</span>
-<span class="cg">foreach ($n in 'startup','bootstrap','checkup','feature','implement','validate') {</span>
-<span class="cg">  $t = "$HOME\.claude\skills\sdd-$n"</span>
-<span class="cg">  New-Item -ItemType Directory -Force $t | Out-Null</span>
-<span class="cg">  Move-Item "$HOME\Downloads\sdd-$n-SKILL.md" "$t\SKILL.md" -Force</span>
-<span class="cg">}</span>
-
-<span class="cm"># macOS / Linux (in WSL use /mnt/c/Users/&lt;Name&gt;/Downloads)</span>
-<span class="cg">for n in startup bootstrap checkup feature implement validate; do</span>
-<span class="cg">  mkdir -p ~/.claude/skills/sdd-$n</span>
-<span class="cg">  mv ~/Downloads/sdd-$n-SKILL.md ~/.claude/skills/sdd-$n/SKILL.md</span>
-<span class="cg">done</span></div>
-          </div>
-          <div>
-            <div class="code-block" style="margin-top:16px;"><span class="ck">~/.claude/skills/</span>
-<span class="cv">├── sdd-startup/</span>
-<span class="cv">│   └── </span><span class="cw">SKILL.md</span>
-<span class="cv">├── sdd-bootstrap/</span>
-<span class="cv">│   └── </span><span class="cw">SKILL.md</span>
-<span class="cv">├── sdd-checkup/</span>
-<span class="cv">│   └── </span><span class="cw">SKILL.md</span>
-<span class="cv">├── sdd-feature/</span>
-<span class="cv">│   └── </span><span class="cw">SKILL.md</span>
-<span class="cv">├── sdd-implement/</span>
-<span class="cv">│   └── </span><span class="cw">SKILL.md</span>
-<span class="cv">└── sdd-validate/</span>
-<span class="cv">    └── </span><span class="cw">SKILL.md</span></div>
-
-            <div class="infobox warn" style="margin-top:12px;">
-              <strong>Common mistake:</strong> placing SKILL.md directly in skills/ root, or naming the file sdd-feature.md instead of SKILL.md. Neither will be detected.
+            <div class="infobox warn">
+              <strong>Test every line:</strong> would removing it make Claude make mistakes? If not, cut it. When CLAUDE.md gets long, Claude starts missing the rules that matter.
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- MODEL SELECTION -->
+    <!-- MODELS -->
     <div class="acc-card stripe-3" onclick="toggleAcc(this)">
       <div class="acc-header">
-        <div class="acc-tag">G·03</div>
+        <div class="acc-tag">S·03</div>
         <div class="acc-meta">
-          <div class="acc-title">Model Selection</div>
-          <div class="acc-desc">Sonnet for everyday work · opusplan for SDD sessions · switch mid-session with /model</div>
+          <div class="acc-title">Model selection</div>
+          <div class="acc-desc">Opus is the default · opusplan for spec sessions · each agent picks its own model</div>
         </div>
         <div class="acc-toggle">+</div>
       </div>
       <div class="acc-body">
         <div class="two-col">
           <div>
-            <div class="steps" style="margin-top:16px;">
-              <div class="step"><span class="step-n sn3">✓</span><div class="step-text"><strong>Sonnet 4.6</strong> — default for most accounts. Best balance of speed, quality, and cost for everyday coding tasks.</div></div>
-              <div class="step"><span class="step-n sn3">✓</span><div class="step-text"><strong>opusplan</strong> — smart hybrid alias. Uses Opus for plan/design phases, drops to Sonnet for code generation automatically. Best for SDD sessions.</div></div>
-              <div class="step"><span class="step-n sn4">↑</span><div class="step-text"><strong>Opus 4.8</strong> — escalate when complexity demands it: large codebase refactors, high-stakes architecture decisions, deeply chained reasoning.</div></div>
-              <div class="step"><span class="step-n sn-x">✗</span><div class="step-text"><strong>Do not declare model in CLAUDE.md</strong> — set it per session or use --model flag at launch.</div></div>
+            <div class="steps">
+              <div class="step"><span class="step-n sn3">✓</span><div class="step-text"><strong>Opus 5.5</strong> is the default on Pro, Max, Team and Enterprise plans. That's a good fit for the main conversation, which plans and coordinates.</div></div>
+              <div class="step"><span class="step-n sn3">✓</span><div class="step-text"><strong>opusplan</strong> uses Opus while in plan mode and switches to Sonnet to execute. Useful for long spec sessions if you want to save usage.</div></div>
+              <div class="step"><span class="step-n sn3">✓</span><div class="step-text"><strong>Agents choose their own model.</strong> sdd-implementer runs on Sonnet (fast and capable for one well-specified task), and sdd-reviewer on Opus (careful judgment). To change one, edit the <code>model:</code> line in its file.</div></div>
+              <div class="step"><span class="step-n sn4">↑</span><div class="step-text"><strong>Fable 5.1</strong> (<code>/model fable</code>) for your hardest, longest-running problems: large refactors and high-stakes architecture.</div></div>
+              <div class="step"><span class="step-n sn-x">✗</span><div class="step-text"><strong>Don't put the model in CLAUDE.md.</strong> Set it per session with <code>/model</code> or <code>--model</code>.</div></div>
             </div>
           </div>
           <div>
-            <div class="code-block" style="margin-top:16px;"><span class="cm"># Best for SDD sessions</span>
+            <div class="code-block"><span class="cm"># start a session on a given model</span>
+<span class="cg">claude --model opus</span>
 <span class="cg">claude --model opusplan</span>
 
-<span class="cm"># Everyday default</span>
-<span class="cg">claude --model sonnet</span>
+<span class="cm"># switch mid-session (context is kept)</span>
+<span class="cv">/model</span>           <span class="cm"># opens the picker</span>
+<span class="cv">/model sonnet</span>    <span class="cm"># switch immediately</span>
 
-<span class="cm"># Switch mid-session</span>
-<span class="cv">/model</span>          <span class="cm"># opens picker</span>
-<span class="cv">/model sonnet</span>  <span class="cm"># switch immediately</span>
-
-<span class="cm"># Context is preserved on switch</span></div>
-
-            <div class="infobox info" style="margin-top:12px;">
-              <strong>opusplan for SDD:</strong> Spec and design phases get Opus reasoning. Implementation tasks get Sonnet speed. Matches exactly how sessions are structured.
+<span class="cm"># in an agent file's frontmatter</span>
+<span class="cv">model: sonnet</span>    <span class="cm"># or opus, haiku, fable, inherit</span></div>
+            <div class="infobox info">
+              <code>inherit</code> makes an agent use whatever model the main conversation is on. Use it if you'd rather control everything from <code>/model</code>.
             </div>
           </div>
         </div>
@@ -195,22 +191,6 @@
     </div>
 
   </div><!-- /accordion -->
-</div>
-
-<!-- MODAL -->
-<div class="modal-bg" id="modal" onclick="closeModal()">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modal-head">
-      <div class="modal-title" id="modal-title"></div>
-      <div class="modal-actions">
-        <button class="modal-download" id="modal-download" onclick="downloadModalMarkdown()">↓ download .md</button>
-        <button class="modal-close" onclick="closeModal()">✕ close</button>
-      </div>
-    </div>
-    <div class="modal-body">
-      <div id="modal-content"></div>
-    </div>
-  </div>
 </div>
 
 <script src="scripts/skills-data.js"></script>

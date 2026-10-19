@@ -12,11 +12,12 @@
   <a href="index.html" class="nav-brand">SDD · Claude Code</a>
   <ul class="nav-links">
     <li><a href="index.html">Home</a></li>
-    <li><a href="global.html">Global Setup</a></li>
+    <li><a href="global.html">Setup</a></li>
     <li><a href="new-project.html">New Project</a></li>
     <li><a href="existing-project.html">Existing Project</a></li>
     <li><a href="workflow.html">Workflow</a></li>
     <li><a href="skills.html">Skills</a></li>
+    <li><a href="agents.html">Agents</a></li>
   </ul>
 </nav>
 
@@ -26,26 +27,32 @@
     <h1 class="page-title">All<br><em class="t3">Skills</em></h1>
     <div class="page-subtitle">
       <span><span class="dot" style="background:var(--c3)"></span>6 SKILL.md files</span>
-      <span><span class="dot" style="background:var(--c1)"></span>~/.claude/skills/[name]/SKILL.md</span>
-      <span><span class="dot" style="background:var(--c2)"></span>click any card to read full content</span>
+      <span><span class="dot" style="background:var(--c1)"></span>~/.claude/skills/&lt;name&gt;/SKILL.md</span>
+      <span><span class="dot" style="background:var(--c2)"></span>open a card to read the full file</span>
     </div>
   </div>
 
-  <div class="divider">Install location</div>
+  <div class="divider">At a glance</div>
 
-  <div class="code-block"><span class="ck">~/.claude/skills/</span>
-<span class="cm">├── sdd-startup/SKILL.md      </span><span class="cv">← /sdd-startup</span>
-<span class="cm">├── sdd-bootstrap/SKILL.md    </span><span class="cv">← /sdd-bootstrap</span>
-<span class="cm">├── sdd-checkup/SKILL.md      </span><span class="cv">← /sdd-checkup</span>
-<span class="cm">├── sdd-feature/SKILL.md      </span><span class="cv">← /sdd-feature</span>
-<span class="cm">├── sdd-implement/SKILL.md    </span><span class="cv">← /sdd-implement</span>
-<span class="cm">└── sdd-validate/SKILL.md     </span><span class="cv">← /sdd-validate</span></div>
-
-  <div class="infobox warn" style="margin-top:12px;">
-    The folder name becomes the slash command. The file inside must be named exactly <strong>SKILL.md</strong> (uppercase) — downloads are named <strong>sdd-[name]-SKILL.md</strong>, so rename each one when moving it into its folder (see <a href="global.html">Global Setup</a> for a one-line install command). Claude Code picks up new skills without a restart; if <strong>~/.claude/skills/</strong> didn't exist when the session started, run <strong>/reload-skills</strong>.
+  <div class="table-wrap">
+    <table class="ref-table">
+      <thead><tr><th>Command</th><th>Use when</th><th>Writes</th><th>Uses agents</th></tr></thead>
+      <tbody>
+        <tr><td>/sdd-startup [idea]</td><td>New project, no code yet</td><td>steering docs, CLAUDE.md, STATE.md</td><td>none</td></tr>
+        <tr><td>/sdd-checkup</td><td>Any unfamiliar or dormant project</td><td>only the fixes you approve</td><td>Explore (large repos)</td></tr>
+        <tr><td>/sdd-bootstrap</td><td>Code exists, no context files</td><td>steering docs, CLAUDE.md, STATE.md</td><td>3× Explore, in parallel</td></tr>
+        <tr><td>/sdd-feature &lt;name&gt; [description]</td><td>Before building any feature</td><td><code>specs/&lt;name&gt;/</code>: requirements, design, tasks</td><td>Explore, for research</td></tr>
+        <tr><td>/sdd-implement &lt;feature&gt; [and …]</td><td>The spec is approved and committed</td><td>code, one commit per task, ticks in tasks.md</td><td>sdd-implementer per task; worktrees for parallel features</td></tr>
+        <tr><td>/sdd-validate &lt;feature&gt;</td><td>Every task is ticked</td><td>steering docs, STATE.md, CHANGELOG, README, version</td><td>sdd-reviewer</td></tr>
+      </tbody>
+    </table>
   </div>
 
-  <div class="divider">When to use each skill</div>
+  <div class="infobox info">
+    <strong>Only you can start these skills.</strong> Each one sets <code>disable-model-invocation: true</code>, because all of them write files or commit. Claude can suggest a skill, but it won't run one on its own. Arguments after the command, like the feature name, are passed to the skill as <code>$ARGUMENTS</code>, and autocomplete shows what each skill expects.
+  </div>
+
+  <div class="divider">Each skill</div>
 
   <div class="accordion">
 
@@ -53,56 +60,26 @@
       <div class="acc-header">
         <div class="acc-tag">/sdd-startup</div>
         <div class="acc-meta">
-          <div class="acc-title" style="color:var(--c6)">New Project — Greenfield</div>
-          <div class="acc-desc">When you have an idea but no code. Elicits purpose and guides stack selection.</div>
+          <div class="acc-title">New project</div>
+          <div class="acc-desc">You have an idea but no code. Interviews you, then walks through each stack decision.</div>
         </div>
         <div class="acc-toggle">+</div>
       </div>
       <div class="acc-body">
-        <div class="chips" style="margin-top:16px;">
+        <div class="chips">
           <span class="chip ok">use when: starting from scratch</span>
-          <span class="chip warn">never use on existing codebases</span>
+          <span class="chip warn">stops if the folder already has code</span>
         </div>
         <p style="margin-top:16px; font-size:13px; color:var(--mute2); line-height:1.6;">
-          Conducts a structured conversation: project purpose → language → framework → data layer → async needs → hosting → testing → hard constraints.
-          For each area Claude presents 2–3 concrete options with one-line trade-offs and a labeled recommendation.
-          You decide. Claude does not default silently. Once all areas are confirmed, generates product.md → tech.md → structure.md → CLAUDE.md (last).
+          Asks about purpose first, then works through each stack area in order: language, framework, data layer, async work, hosting, testing, hard constraints.
+          Each area is a multiple-choice question with 2–3 options, one-line trade-offs, and a recommendation listed first. You make every choice.
+          Then it writes product.md → tech.md → structure.md → CLAUDE.md (last) → STATE.md, and adds <code>.claude/worktrees/</code> to .gitignore.
         </p>
         <button class="skill-btn sk6" onclick="openModal('startup'); event.stopPropagation()" style="margin-top:16px;">
           <div class="skill-icon">✦</div>
           <div class="skill-meta">
-            <div class="skill-name">/sdd-startup — read full SKILL.md</div>
-            <div class="skill-hint">click to open</div>
-          </div>
-        </button>
-      </div>
-    </div>
-
-    <div class="acc-card stripe-1" onclick="toggleAcc(this)">
-      <div class="acc-header">
-        <div class="acc-tag">/sdd-bootstrap</div>
-        <div class="acc-meta">
-          <div class="acc-title" style="color:var(--c1)">Existing Project — Extract Context</div>
-          <div class="acc-desc">When a codebase exists but has no CLAUDE.md or steering docs.</div>
-        </div>
-        <div class="acc-toggle">+</div>
-      </div>
-      <div class="acc-body">
-        <div class="chips" style="margin-top:16px;">
-          <span class="chip ok">use when: no SDD context files exist</span>
-          <span class="chip ok">run once per project</span>
-          <span class="chip warn">run /sdd-checkup first</span>
-        </div>
-        <p style="margin-top:16px; font-size:13px; color:var(--mute2); line-height:1.6;">
-          Scans the codebase and reverse-engineers decisions already made — stack, conventions, folder structure, patterns in use.
-          Asks clarifying questions one at a time for anything ambiguous. Never invents decisions.
-          Generates steering docs first, CLAUDE.md last (to avoid duplicating content from steering docs into the instructions file).
-        </p>
-        <button class="skill-btn sk1" onclick="openModal('bootstrap'); event.stopPropagation()" style="margin-top:16px;">
-          <div class="skill-icon">⚡</div>
-          <div class="skill-meta">
-            <div class="skill-name">/sdd-bootstrap — read full SKILL.md</div>
-            <div class="skill-hint">click to open</div>
+            <div class="skill-name">/sdd-startup: read SKILL.md</div>
+            <div class="skill-hint">read · copy · download</div>
           </div>
         </button>
       </div>
@@ -112,26 +89,57 @@
       <div class="acc-header">
         <div class="acc-tag">/sdd-checkup</div>
         <div class="acc-meta">
-          <div class="acc-title" style="color:var(--c7)">Project Health Audit</div>
-          <div class="acc-desc">When you open an unfamiliar or dormant project and want to know what's missing.</div>
+          <div class="acc-title">Project health audit</div>
+          <div class="acc-desc">You've opened an unfamiliar or dormant project and want to know what's missing or stale.</div>
         </div>
         <div class="acc-toggle">+</div>
       </div>
       <div class="acc-body">
-        <div class="chips" style="margin-top:16px;">
-          <span class="chip ok">use when: starting any session on unknown project</span>
-          <span class="chip ok">safe — reports only, no changes without approval</span>
+        <div class="chips">
+          <span class="chip ok">reports first</span>
+          <span class="chip ok">one approval per fix</span>
+          <span class="chip info">upgrades older SDD projects</span>
         </div>
         <p style="margin-top:16px; font-size:13px; color:var(--mute2); line-height:1.6;">
-          Scans silently first, then presents a structured report: context files, STATE.md coherence (git log against hash),
-          orphaned specs, metadata freshness, agent files. Suggests fixes ranked Critical → Important → Optional.
-          Applies fixes only after you approve each one, in a safe order. Detects AGENTS.md (Cursor projects) and offers conversion.
+          Checks the context files and CLAUDE.md size, <code>@</code> imports, STATE.md drift against git, specs STATE.md doesn't mention, tasks missing Files or Check lines,
+          stale CHANGELOG, README and version, whether the agents are installed, and whether worktrees are gitignored. Ranks the fixes Critical → Important → Optional and applies only those you approve.
+          If it finds an AGENTS.md, it keeps it and adds a CLAUDE.md that imports it.
         </p>
         <button class="skill-btn sk7" onclick="openModal('checkup'); event.stopPropagation()" style="margin-top:16px;">
           <div class="skill-icon">◎</div>
           <div class="skill-meta">
-            <div class="skill-name">/sdd-checkup — read full SKILL.md</div>
-            <div class="skill-hint">click to open</div>
+            <div class="skill-name">/sdd-checkup: read SKILL.md</div>
+            <div class="skill-hint">read · copy · download</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <div class="acc-card stripe-1" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <div class="acc-tag">/sdd-bootstrap</div>
+        <div class="acc-meta">
+          <div class="acc-title">Existing project: write the context files</div>
+          <div class="acc-desc">A codebase exists, but there's no CLAUDE.md or steering docs.</div>
+        </div>
+        <div class="acc-toggle">+</div>
+      </div>
+      <div class="acc-body">
+        <div class="chips">
+          <span class="chip ok">once per project</span>
+          <span class="chip warn">run /sdd-checkup first</span>
+          <span class="chip info">3 Explore agents in parallel</span>
+        </div>
+        <p style="margin-top:16px; font-size:13px; color:var(--mute2); line-height:1.6;">
+          Three Explore agents map the stack, the structure and the conventions at the same time, and each returns a short summary with file paths.
+          Claude asks only about what the code can't tell it, and never invents decisions. tech.md marks each decision <em>inferred</em> or <em>confirmed</em>.
+          CLAUDE.md is written last and stays short, and STATE.md starts at the current commit.
+        </p>
+        <button class="skill-btn sk1" onclick="openModal('bootstrap'); event.stopPropagation()" style="margin-top:16px;">
+          <div class="skill-icon">⚡</div>
+          <div class="skill-meta">
+            <div class="skill-name">/sdd-bootstrap: read SKILL.md</div>
+            <div class="skill-hint">read · copy · download</div>
           </div>
         </button>
       </div>
@@ -141,27 +149,27 @@
       <div class="acc-header">
         <div class="acc-tag">/sdd-feature</div>
         <div class="acc-meta">
-          <div class="acc-title" style="color:var(--c2)">Spec a Feature</div>
-          <div class="acc-desc">When you have a feature request. Produces requirements.md, design.md, tasks.md.</div>
+          <div class="acc-title">Spec a feature</div>
+          <div class="acc-desc">Requirements → design → tasks with checks, with your approval after each phase. No code.</div>
         </div>
         <div class="acc-toggle">+</div>
       </div>
       <div class="acc-body">
-        <div class="chips" style="margin-top:16px;">
-          <span class="chip ok">use when: starting any new feature or change</span>
-          <span class="chip warn">requires CLAUDE.md + steering docs to exist first</span>
+        <div class="chips">
+          <span class="chip ok">use when: any new feature or multi-file change</span>
+          <span class="chip warn">needs CLAUDE.md and tech.md</span>
+          <span class="chip info">/sdd-feature csv-export let users export reports</span>
         </div>
         <p style="margin-top:16px; font-size:13px; color:var(--mute2); line-height:1.6;">
-          Three phases with a human approval gate between each. Requirements: asks questions one at a time.
-          Design: cross-references tech.md before writing anything — if the proposed solution needs technology not in the current stack,
-          stops and presents options with trade-offs. Tasks: atomic tasks labeled PARALLEL / SEQUENTIAL / GATE.
-          Implementation starts only after you confirm tasks.md.
+          The first word is the feature name and the rest is an optional description. Requirements come from an interview and end with numbered, testable acceptance criteria.
+          Design uses Explore agents for research, checks against tech.md, and stops at every stack gap. Tasks each list their files, a check command and the criteria they cover,
+          so a fresh agent can complete one without the conversation. If the spec folder exists, it resumes where you left off.
         </p>
         <button class="skill-btn sk2" onclick="openModal('feature'); event.stopPropagation()" style="margin-top:16px;">
           <div class="skill-icon">◈</div>
           <div class="skill-meta">
-            <div class="skill-name">/sdd-feature — read full SKILL.md</div>
-            <div class="skill-hint">click to open</div>
+            <div class="skill-name">/sdd-feature: read SKILL.md</div>
+            <div class="skill-hint">read · copy · download</div>
           </div>
         </button>
       </div>
@@ -171,27 +179,28 @@
       <div class="acc-header">
         <div class="acc-tag">/sdd-implement</div>
         <div class="acc-meta">
-          <div class="acc-title" style="color:var(--c3)">Implement Features</div>
-          <div class="acc-desc">When tasks.md is approved. Handles one feature or multiple with automatic parallelization.</div>
+          <div class="acc-title">Implement features</div>
+          <div class="acc-desc">Coordinates the build. One agent per task, then a check, a commit and a tick for each. Parallel worktrees for several features.</div>
         </div>
         <div class="acc-toggle">+</div>
       </div>
       <div class="acc-body">
-        <div class="chips" style="margin-top:16px;">
-          <span class="chip ok">use when: tasks.md approved</span>
-          <span class="chip ok">safe to call in new session — resumes from unchecked tasks</span>
+        <div class="chips">
+          <span class="chip ok">use when: spec approved and committed</span>
+          <span class="chip ok">resumes from the first unticked task</span>
           <span class="chip info">/sdd-implement feat-a and feat-b</span>
         </div>
         <p style="margin-top:16px; font-size:13px; color:var(--mute2); line-height:1.6;">
-          Parses one or multiple feature names. Checks STATE.md and task checkboxes to detect partial implementations and resume from the right task.
-          For multiple features: builds a file manifest per feature, detects overlap, proposes parallel worktree execution or sequential with rationale.
-          Always presents an execution plan for approval before writing any code. Stack gaps found mid-implementation cause a full stop.
+          The main conversation doesn't write the feature code. It plans, waits for your approval, then gives each task to a new sdd-implementer agent.
+          Tasks in a PARALLEL group run at the same time. After each one it re-runs the check, makes sure only the expected files changed, ticks the task and commits <code>[T&lt;n&gt;]</code>.
+          It retries once on failure, then stops and asks you. With several features it compares their files and runs the independent ones in parallel worktrees.
+          It pre-approves the git commands it needs (<code>allowed-tools</code>), so committing doesn't ask permission each time.
         </p>
         <button class="skill-btn sk3" onclick="openModal('implement'); event.stopPropagation()" style="margin-top:16px;">
           <div class="skill-icon">▶</div>
           <div class="skill-meta">
-            <div class="skill-name">/sdd-implement — read full SKILL.md</div>
-            <div class="skill-hint">click to open</div>
+            <div class="skill-name">/sdd-implement: read SKILL.md</div>
+            <div class="skill-hint">read · copy · download</div>
           </div>
         </button>
       </div>
@@ -201,28 +210,27 @@
       <div class="acc-header">
         <div class="acc-tag">/sdd-validate</div>
         <div class="acc-meta">
-          <div class="acc-title" style="color:var(--c4)">Validate a Completed Feature</div>
-          <div class="acc-desc">After all tasks complete. Run in a fresh session — never inline with implementation.</div>
+          <div class="acc-title">Validate a finished feature</div>
+          <div class="acc-desc">An independent reviewer gives a pass/fail verdict, then the docs and STATE.md are updated.</div>
         </div>
         <div class="acc-toggle">+</div>
       </div>
       <div class="acc-body">
-        <div class="chips" style="margin-top:16px;">
-          <span class="chip ok">use when: all tasks done and committed</span>
-          <span class="chip warn">fresh session required — not inline</span>
-          <span class="chip warn">phase 1 is a hard gate</span>
+        <div class="chips">
+          <span class="chip ok">use when: every task is ticked</span>
+          <span class="chip ok">same session is fine</span>
+          <span class="chip warn">the first step is a hard stop</span>
         </div>
         <p style="margin-top:16px; font-size:13px; color:var(--mute2); line-height:1.6;">
-          Four phases. Phase 1 (hard gate): verifies each Acceptance Criterion — any failure stops the skill.
-          Phase 2: audits steering docs for structural changes including stack gap decisions made during design.
-          Phase 3: updates STATE.md with feature status and new HEAD hash.
-          Phase 4: updates CHANGELOG, README, package.json only if they exist and only what's necessary.
+          It starts by loading <code>git status</code> and the recent log into the skill (the <code>!`command`</code> syntax), so it knows the repository's state without being told.
+          sdd-reviewer gets only the feature folder and the commit range, and returns a pass/fail verdict with evidence for each acceptance criterion. Any failure stops the skill.
+          After a pass, it updates the steering docs, STATE.md, CHANGELOG, README and version, and asks you before a version bump.
         </p>
         <button class="skill-btn sk4" onclick="openModal('validate'); event.stopPropagation()" style="margin-top:16px;">
           <div class="skill-icon">✓</div>
           <div class="skill-meta">
-            <div class="skill-name">/sdd-validate — read full SKILL.md</div>
-            <div class="skill-hint">click to open</div>
+            <div class="skill-name">/sdd-validate: read SKILL.md</div>
+            <div class="skill-hint">read · copy · download</div>
           </div>
         </button>
       </div>
@@ -230,32 +238,24 @@
 
   </div>
 
-  <div class="divider">Global CLAUDE.md template</div>
+  <div class="divider">Install</div>
 
-  <div style="margin-bottom:16px;">
-    <button class="skill-btn sk0" onclick="openModal('global')" style="max-width:400px;">
-      <div class="skill-icon">◉</div>
-      <div class="skill-meta">
-        <div class="skill-name">~/.claude/CLAUDE.md</div>
-        <div class="skill-hint">personal preferences — click to read full template</div>
-      </div>
-    </button>
-  </div>
-
-</div>
-
-<!-- MODAL -->
-<div class="modal-bg" id="modal" onclick="closeModal()">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modal-head">
-      <div class="modal-title" id="modal-title"></div>
-      <div class="modal-actions">
-        <button class="modal-download" id="modal-download" onclick="downloadModalMarkdown()">↓ download .md</button>
-        <button class="modal-close" onclick="closeModal()">✕ close</button>
-      </div>
+  <div class="two-col" style="margin-top:0;">
+    <div class="infobox ok" style="margin-top:0;">
+      <strong>Use the one-line install</strong> on the <a href="global.html">Setup</a> page. It fetches every skill and agent into the right folders, and you can re-run it to update.
+      If you download a file here instead, rename it to <code>SKILL.md</code> inside a folder named after the skill, as shown in the modal's <em>save as</em> line.
     </div>
-    <div class="modal-body"><div id="modal-content"></div></div>
+    <div>
+      <button class="skill-btn sk0" onclick="openModal('global')">
+        <div class="skill-icon">◉</div>
+        <div class="skill-meta">
+          <div class="skill-name">~/.claude/CLAUDE.md</div>
+          <div class="skill-hint">your personal preferences template</div>
+        </div>
+      </button>
+    </div>
   </div>
+
 </div>
 
 <script src="scripts/skills-data.js"></script>

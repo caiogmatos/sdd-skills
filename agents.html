@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agents — SDD</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="nav-brand">SDD · Claude Code</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="global.html">Setup</a></li>
+    <li><a href="new-project.html">New Project</a></li>
+    <li><a href="existing-project.html">Existing Project</a></li>
+    <li><a href="workflow.html">Workflow</a></li>
+    <li><a href="skills.html">Skills</a></li>
+    <li><a href="agents.html">Agents</a></li>
+  </ul>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <div class="eyebrow">Reference</div>
+    <h1 class="page-title">The<br><em class="t4">Agents</em></h1>
+    <div class="page-subtitle">
+      <span><span class="dot" style="background:var(--c3)"></span>sdd-implementer</span>
+      <span><span class="dot" style="background:var(--c4)"></span>sdd-reviewer</span>
+      <span><span class="dot" style="background:var(--c1)"></span>built-in Explore</span>
+      <span><span class="dot" style="background:var(--c2)"></span>~/.claude/agents/</span>
+    </div>
+  </div>
+
+  <div class="divider">Why agents</div>
+
+  <p style="font-size:14px; color:var(--mute2); line-height:1.8; max-width:720px;">
+    An agent (Claude Code calls them <em>subagents</em>) is a separate Claude with <strong style="color:var(--text)">its own fresh context</strong>, its own instructions, and a limited set of tools.
+    The main conversation hands it a job. It reads whatever it needs, does the work, and returns only a short report.
+    That solves two problems SDD used to work around with separate sessions:
+  </p>
+
+  <div class="two-col">
+    <div class="cond ok">
+      <div class="cond-label">✓ context stays small</div>
+      <div class="cond-text">Reading files and running commands fills Claude's context, and quality drops as it fills. When every task runs in its own agent, the main conversation only ever holds the plan and short reports, even across a twenty-task feature.</div>
+    </div>
+    <div class="cond ok">
+      <div class="cond-label">✓ review without bias</div>
+      <div class="cond-text">A reviewer that watched the code being written tends to agree with it. sdd-reviewer sees only the spec and the changes, so it judges the result on its own terms.</div>
+    </div>
+  </div>
+
+  <div class="divider">Who delegates to whom</div>
+
+  <div class="parallel-diagram"><span class="pd-phase">YOU</span>  →  /sdd-feature · /sdd-implement · /sdd-validate
+  │
+<span class="pd-phase">MAIN CONVERSATION</span>  <span style="color:var(--border2)">asks you questions · plans · runs checks · commits</span>
+  │
+  ├── <span class="pd-feat">Explore</span>           <span style="color:var(--border2)">built in · read-only · research for bootstrap, feature, checkup</span>
+  ├── <span class="pd-feat">sdd-implementer</span>   <span style="color:var(--border2)">one per task · edits code · runs the task's check · no commits</span>
+  ├── <span class="pd-feat">sdd-reviewer</span>      <span style="color:var(--border2)">one per validation · read-only · pass/fail with evidence</span>
+  └── <span class="pd-feat">feature agent</span>     <span style="color:var(--border2)">built in (general-purpose) · one per feature in parallel mode</span>
+        │                <span style="color:var(--border2)">runs in its own worktree</span>
+        └── <span class="pd-feat">sdd-implementer</span> <span style="color:var(--border2)">one per task, inside that worktree</span></div>
+
+  <div class="accordion">
+
+    <!-- IMPLEMENTER -->
+    <div class="acc-card stripe-3" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <div class="acc-tag">A·01</div>
+        <div class="acc-meta">
+          <div class="acc-title">sdd-implementer</div>
+          <div class="acc-desc">Builds exactly one task from tasks.md and runs its check · Sonnet · used by /sdd-implement</div>
+        </div>
+        <div class="acc-toggle">+</div>
+      </div>
+      <div class="acc-body">
+        <div class="chips">
+          <span class="chip ok">tools: Read, Edit, Write, Glob, Grep, Bash</span>
+          <span class="chip info">model: sonnet</span>
+          <span class="chip warn">never commits</span>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="steps">
+              <div class="step"><span class="step-n sn3">in</span><div class="step-text"><strong>Receives</strong> only the feature folder, the task ID and the test command. Everything else it reads from the spec and the code.</div></div>
+              <div class="step"><span class="step-n sn3">do</span><div class="step-text"><strong>Builds the task</strong> within the task's Files, following CLAUDE.md conventions and the patterns in nearby code.</div></div>
+              <div class="step"><span class="step-n sn3">✓</span><div class="step-text"><strong>Runs the check</strong>, fixing and re-running up to three times. It never weakens a test to make it pass.</div></div>
+              <div class="step"><span class="step-n sn-x">✗</span><div class="step-text"><strong>Doesn't commit</strong> or edit tasks.md and STATE.md. The coordinator does that after re-running the check.</div></div>
+              <div class="step"><span class="step-n sn4">!</span><div class="step-text"><strong>Reports BLOCKED</strong> instead of improvising when there's a stack gap, a contradiction in the spec, or a check that can't pass within scope.</div></div>
+            </div>
+          </div>
+          <div>
+            <div class="code-block" style="margin-top:0;"><span class="ck">report → coordinator</span>
+
+<span class="cg">STATUS: DONE</span>
+<span class="cv">TASK: T1 Add CSV serializer</span>
+<span class="cv">FILES CHANGED: src/export/csv.ts,</span>
+<span class="cv">  test/csv.test.ts</span>
+<span class="cv">CHECK: `npm test -- csv.test.ts` -> pass</span>
+<span class="cv">  (6 tests)</span>
+<span class="cv">NOTES: quoted fields use RFC 4180 rules</span></div>
+            <button class="skill-btn sk3" onclick="openModal('implementer'); event.stopPropagation()" style="margin-top:12px;">
+              <div class="skill-icon">▶</div>
+              <div class="skill-meta">
+                <div class="skill-name">sdd-implementer.md</div>
+                <div class="skill-hint">read · copy · download</div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVIEWER -->
+    <div class="acc-card stripe-4" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <div class="acc-tag">A·02</div>
+        <div class="acc-meta">
+          <div class="acc-title">sdd-reviewer</div>
+          <div class="acc-desc">Checks the feature against its acceptance criteria, with evidence · read-only · Opus · used by /sdd-validate</div>
+        </div>
+        <div class="acc-toggle">+</div>
+      </div>
+      <div class="acc-body">
+        <div class="chips">
+          <span class="chip ok">tools: Read, Glob, Grep, Bash</span>
+          <span class="chip info">model: opus</span>
+          <span class="chip warn">no Edit or Write tools</span>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="steps">
+              <div class="step"><span class="step-n sn4">in</span><div class="step-text"><strong>Receives</strong> only the feature folder and the commit range, never the coordinator's opinion of the work.</div></div>
+              <div class="step"><span class="step-n sn4">1</span><div class="step-text"><strong>Reads the spec</strong>, confirms there's one commit per task, and looks at what changed.</div></div>
+              <div class="step"><span class="step-n sn4">2</span><div class="step-text"><strong>Checks each acceptance criterion</strong> by finding the code and the test that cover it and running the test. Every verdict cites evidence.</div></div>
+              <div class="step"><span class="step-n sn4">3</span><div class="step-text"><strong>Checks scope</strong>: did anything change that no task asked for, and was anything out of scope built anyway?</div></div>
+              <div class="step"><span class="step-n sn4">4</span><div class="step-text"><strong>Runs the full test suite.</strong> The overall result is PASS only if every criterion and the suite pass.</div></div>
+            </div>
+          </div>
+          <div>
+            <div class="infobox warn" style="margin-top:0;">
+              <strong>Tuned to avoid nitpicking:</strong> a reviewer asked to find problems will usually find some. sdd-reviewer fails a feature only for gaps that affect correctness or a stated requirement. Anything else goes under "Optional notes", so you don't chase style findings.
+            </div>
+            <button class="skill-btn sk4" onclick="openModal('reviewer'); event.stopPropagation()" style="margin-top:12px;">
+              <div class="skill-icon">✓</div>
+              <div class="skill-meta">
+                <div class="skill-name">sdd-reviewer.md</div>
+                <div class="skill-hint">read · copy · download</div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUILT-IN -->
+    <div class="acc-card stripe-1" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <div class="acc-tag">A·03</div>
+        <div class="acc-meta">
+          <div class="acc-title">Built-in agents the skills use</div>
+          <div class="acc-desc">Part of Claude Code itself · nothing to install</div>
+        </div>
+        <div class="acc-toggle">+</div>
+      </div>
+      <div class="acc-body">
+        <div class="steps">
+          <div class="step"><span class="step-n sn1">E</span><div class="step-text"><strong>Explore</strong>: a fast, read-only agent for searching and understanding code. /sdd-bootstrap runs three at once, and /sdd-feature and /sdd-checkup use it for research, so file contents stay out of your conversation.</div></div>
+          <div class="step"><span class="step-n sn1">G</span><div class="step-text"><strong>general-purpose</strong>: used by /sdd-implement in parallel mode, one per feature, each in its own worktree. Inside it, every task still goes to sdd-implementer.</div></div>
+          <div class="step"><span class="step-n sn1">R</span><div class="step-text"><strong>/code-review</strong>: a built-in skill that reviews the current changes for bugs, in its own agent. /sdd-implement offers it when a feature's tasks are done. It complements sdd-reviewer, which checks the spec rather than looking for bugs.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOMIZE -->
+    <div class="acc-card stripe-2" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <div class="acc-tag">A·04</div>
+        <div class="acc-meta">
+          <div class="acc-title">Customizing and limits</div>
+          <div class="acc-desc">Change a model · override an agent for one project · what agents can't do</div>
+        </div>
+        <div class="acc-toggle">+</div>
+      </div>
+      <div class="acc-body">
+        <div class="two-col">
+          <div>
+            <div class="steps">
+              <div class="step"><span class="step-n sn2">1</span><div class="step-text"><strong>Change the model</strong> by editing <code>model:</code> in the agent file. <code>inherit</code> makes it follow the main conversation's model.</div></div>
+              <div class="step"><span class="step-n sn2">2</span><div class="step-text"><strong>Override for one project</strong> by copying the file into that project's <code>.claude/agents/</code>. A project agent wins over one with the same name in <code>~/.claude/agents/</code>.</div></div>
+              <div class="step"><span class="step-n sn2">3</span><div class="step-text"><strong>Edits take effect immediately.</strong> Claude Code notices changed agent files within a few seconds. The one exception is the first file in a brand-new agents folder, which needs a new session.</div></div>
+            </div>
+          </div>
+          <div>
+            <div class="steps">
+              <div class="step"><span class="step-n sn-x">✗</span><div class="step-text"><strong>Agents can't ask you questions.</strong> That's why sdd-implementer reports BLOCKED and the coordinator asks you instead.</div></div>
+              <div class="step"><span class="step-n sn-x">✗</span><div class="step-text"><strong>Agents don't see your conversation.</strong> That's why tasks have to be complete on their own, with files, steps, a check and the criteria they cover.</div></div>
+              <div class="step"><span class="step-n sn4">!</span><div class="step-text"><strong>Every report adds to the main context.</strong> That's why both agents keep their reports short.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="scripts/skills-data.js"></script>
+<script src="scripts/nav.js"></script>
+</body>
+</html>

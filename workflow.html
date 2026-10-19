@@ -12,276 +12,258 @@
   <a href="index.html" class="nav-brand">SDD · Claude Code</a>
   <ul class="nav-links">
     <li><a href="index.html">Home</a></li>
-    <li><a href="global.html">Global Setup</a></li>
+    <li><a href="global.html">Setup</a></li>
     <li><a href="new-project.html">New Project</a></li>
     <li><a href="existing-project.html">Existing Project</a></li>
     <li><a href="workflow.html">Workflow</a></li>
     <li><a href="skills.html">Skills</a></li>
+    <li><a href="agents.html">Agents</a></li>
   </ul>
 </nav>
 
 <div class="page">
   <div class="page-header">
-    <div class="eyebrow">The Recipe</div>
-    <h1 class="page-title">Session<br><em class="t2">Workflow</em></h1>
+    <div class="eyebrow">Day to day</div>
+    <h1 class="page-title">Feature<br><em class="t2">Workflow</em></h1>
     <div class="page-subtitle">
-      <span><span class="dot" style="background:var(--c0)"></span>Global — once ever</span>
-      <span><span class="dot" style="background:var(--c1)"></span>Session 1 — bootstrap</span>
-      <span><span class="dot" style="background:var(--c2)"></span>Session 2 — spec + implement</span>
-      <span><span class="dot" style="background:var(--c4)"></span>Session 3 — validate</span>
-      <span><span class="dot" style="background:var(--c5)"></span>Advanced — parallel</span>
+      <span><span class="dot" style="background:var(--c2)"></span>W·01 Spec</span>
+      <span><span class="dot" style="background:var(--c3)"></span>W·02 Implement</span>
+      <span><span class="dot" style="background:var(--c4)"></span>W·03 Validate</span>
+      <span><span class="dot" style="background:var(--c5)"></span>Parallel features</span>
     </div>
   </div>
 
   <div class="flow-ribbon">
     <div class="flow-node">
-      <div class="flow-pill p0">Global</div>
-      <div class="flow-label">once ever</div>
+      <div class="flow-pill p2">/sdd-feature</div>
+      <div class="flow-label">✋ 3 approvals</div>
     </div>
     <div class="flow-gate">→</div>
     <div class="flow-node">
-      <div class="flow-pill p1">Bootstrap</div>
-      <div class="flow-label">Session 1</div>
+      <div class="flow-pill p0">commit · /clear</div>
+      <div class="flow-label">fresh context</div>
     </div>
     <div class="flow-gate">→</div>
     <div class="flow-node">
-      <div class="flow-pill p2">Spec (RDT)</div>
-      <div class="flow-label">Session 2</div>
+      <div class="flow-pill p3">/sdd-implement</div>
+      <div class="flow-label">✋ approve plan</div>
     </div>
     <div class="flow-gate">→</div>
     <div class="flow-node">
-      <div class="flow-pill p3">Implement</div>
-      <div class="flow-label">Session 2</div>
-    </div>
-    <div class="flow-gate">→</div>
-    <div class="flow-node">
-      <div class="flow-pill p4">Validate</div>
-      <div class="flow-label">Session 3</div>
-    </div>
-    <div class="flow-gate">→</div>
-    <div class="flow-node">
-      <div class="flow-pill p5">Parallel ×N</div>
-      <div class="flow-label">Advanced</div>
+      <div class="flow-pill p4">/sdd-validate</div>
+      <div class="flow-label">same session is fine</div>
     </div>
   </div>
 
+  <div class="divider">Cheat sheet</div>
+
+  <div class="table-wrap">
+    <table class="ref-table">
+      <thead><tr><th>Type</th><th>When</th><th>What happens</th></tr></thead>
+      <tbody>
+        <tr><td>/sdd-feature csv-export Let users export reports</td><td>You want a new feature or a multi-file change</td><td>Requirements → design → tasks, each approved by you. Writes <code>specs/csv-export/</code>.</td></tr>
+        <tr><td>commit the spec · /clear</td><td>All three spec files are approved</td><td>Agents work from committed files, and a fresh context keeps the build focused on the spec.</td></tr>
+        <tr><td>/sdd-implement csv-export</td><td>The spec is committed</td><td>Plan → your approval → one agent per task, then a check, a commit and a tick for each.</td></tr>
+        <tr><td>/sdd-validate csv-export</td><td>Every task is ticked</td><td>An independent reviewer gives a pass/fail verdict per acceptance criterion, then the docs and STATE.md are updated.</td></tr>
+        <tr><td>/sdd-implement a and b</td><td>Several specs are ready and don't share files</td><td>Each feature is built in its own worktree, at the same time.</td></tr>
+        <tr><td>/sdd-implement csv-export</td><td>A session ended mid-feature</td><td>It resumes at the first unticked task.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider">Step by step</div>
+
   <div class="accordion">
 
-    <!-- GLOBAL -->
-    <div class="acc-card stripe-0" onclick="toggleAcc(this)">
-      <div class="acc-header">
-        <div class="acc-tag">G·00</div>
-        <div class="acc-meta">
-          <div class="acc-title">Global Setup</div>
-          <div class="acc-desc">~/.claude/CLAUDE.md · skills install · model selection — do this once, never again</div>
-        </div>
-        <div class="acc-toggle">+</div>
-      </div>
-      <div class="acc-body">
-        <div class="chips">
-          <span class="chip ok">set once · applies to all projects</span>
-          <span class="chip warn">do not declare OS or runtime versions</span>
-        </div>
-        <div class="two-col">
-          <div>
-            <div class="steps" style="margin-top:16px;">
-              <div class="step"><span class="step-n sn0">01</span><div class="step-text"><strong>Create ~/.claude/CLAUDE.md</strong> — communication style, code preferences, SDD defaults, design decision rules</div></div>
-              <div class="step"><span class="step-n sn0">02</span><div class="step-text"><strong>Install skills</strong> — one subfolder per skill inside ~/.claude/skills/, file named exactly SKILL.md</div></div>
-              <div class="step"><span class="step-n sn0">03</span><div class="step-text"><strong>Set default model</strong> — opusplan for SDD sessions (Opus for planning, Sonnet for implementation)</div></div>
-            </div>
-          </div>
-          <div>
-            <button class="skill-btn sk0" onclick="openModal('global'); event.stopPropagation()" style="margin-top:16px;">
-              <div class="skill-icon">◉</div>
-              <div class="skill-meta">
-                <div class="skill-name">~/.claude/CLAUDE.md</div>
-                <div class="skill-hint">click to read full template</div>
-              </div>
-            </button>
-            <div class="infobox info" style="margin-top:12px;">
-              See <a href="global.html" style="color:var(--c1);">Global Setup</a> for the full guide on what belongs here and what Claude already detects automatically.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SESSION 1 BOOTSTRAP -->
-    <div class="acc-card stripe-1" onclick="toggleAcc(this)">
-      <div class="acc-header">
-        <div class="acc-tag">S·01</div>
-        <div class="acc-meta">
-          <div class="acc-title">Bootstrap</div>
-          <div class="acc-desc">Generate CLAUDE.md + steering docs · one time per project · no code written</div>
-        </div>
-        <div class="acc-toggle">+</div>
-      </div>
-      <div class="acc-body">
-        <div class="chips">
-          <span class="chip ok">runs once per project</span>
-          <span class="chip ok">commit output before next session</span>
-          <span class="chip warn">no code written</span>
-        </div>
-        <div class="two-col">
-          <div>
-            <div class="steps" style="margin-top:16px;">
-              <div class="step"><span class="step-n sn1">01</span><div class="step-text"><strong>Clone and scan</strong> — git log --oneline -10, ls -la. Understand what exists first.</div></div>
-              <div class="step"><span class="step-n sn1">02</span><div class="step-text"><strong>/sdd-checkup</strong> — run first to see if any context already exists. May save you a bootstrap.</div></div>
-              <div class="step"><span class="step-n sn1">03</span><div class="step-text"><strong>/sdd-bootstrap</strong> — scans codebase, asks clarifying questions one at a time.</div></div>
-              <div class="step"><span class="step-n sn1">04</span><div class="step-text"><strong>Approve 4 files</strong> — product.md, tech.md, structure.md, CLAUDE.md (with @imports).</div></div>
-              <div class="step"><span class="step-n sn1">05</span><div class="step-text"><strong>Commit</strong> — "chore: add SDD context files"</div></div>
-            </div>
-          </div>
-          <div>
-            <button class="skill-btn sk1" onclick="openModal('bootstrap'); event.stopPropagation()" style="margin-top:16px;">
-              <div class="skill-icon">⚡</div>
-              <div class="skill-meta">
-                <div class="skill-name">/sdd-bootstrap</div>
-                <div class="skill-hint">click to read SKILL.md</div>
-              </div>
-            </button>
-            <button class="skill-btn sk7" onclick="openModal('checkup'); event.stopPropagation()" style="margin-top:8px;">
-              <div class="skill-icon">◎</div>
-              <div class="skill-meta">
-                <div class="skill-name">/sdd-checkup</div>
-                <div class="skill-hint">run before bootstrap on any existing project</div>
-              </div>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SESSION 2 SPEC + IMPLEMENT -->
+    <!-- SPEC -->
     <div class="acc-card stripe-2" onclick="toggleAcc(this)">
       <div class="acc-header">
-        <div class="acc-tag">S·02</div>
+        <div class="acc-tag">W·01</div>
         <div class="acc-meta">
-          <div class="acc-title">Spec → Implement</div>
-          <div class="acc-desc">Requirements · Design (with stack gap detection) · Tasks · Implementation — one continuous session</div>
+          <div class="acc-title">Spec the feature</div>
+          <div class="acc-desc">Requirements · Design (with stack-gap check) · Tasks with checks · no code</div>
         </div>
         <div class="acc-toggle">+</div>
       </div>
       <div class="acc-body">
         <div class="chips">
-          <span class="chip ok">one session per feature</span>
-          <span class="chip warn">human gate after each spec phase</span>
-          <span class="chip warn">design stops if stack gap found</span>
-          <span class="chip ok">atomic commits per task</span>
+          <span class="chip ok">you approve each phase</span>
+          <span class="chip warn">design stops at every stack gap</span>
+          <span class="chip info">research runs in Explore agents</span>
         </div>
 
         <div class="two-col">
           <div>
-            <div style="font-family:var(--mono); font-size:10px; letter-spacing:2px; color:var(--mute2); text-transform:uppercase; margin:16px 0 10px;">Spec phase — RDT</div>
             <div class="steps">
-              <div class="step"><span class="step-n sn2">R</span><div class="step-text"><strong>Requirements</strong> — Claude asks questions one at a time → specs/[feature]/requirements.md. <strong>You approve.</strong></div></div>
-              <div class="step"><span class="step-n sn2">D</span><div class="step-text"><strong>Design</strong> — cross-references tech.md. <strong>Stops if stack gap found.</strong> Presents options, waits for your decision. <strong>You approve.</strong></div></div>
-              <div class="step"><span class="step-n sn2">T</span><div class="step-text"><strong>Tasks</strong> — atomic tasks with PARALLEL / SEQUENTIAL / GATE markers. <strong>You approve.</strong></div></div>
+              <div class="step"><span class="step-n sn2">R</span><div class="step-text"><strong>Requirements.</strong> Claude interviews you one question at a time, including edge cases you may not have considered. Writes user stories, numbered acceptance criteria (AC-1, AC-2…) and an Out of scope list. <strong>You approve.</strong></div></div>
+              <div class="step"><span class="step-n sn2">D</span><div class="step-text"><strong>Design.</strong> Explore agents look at the relevant code and send back summaries. The design is checked against tech.md, and <strong>stops at every stack gap</strong> until you choose an option. Ends with a plan for verifying each acceptance criterion. <strong>You approve.</strong></div></div>
+              <div class="step"><span class="step-n sn2">T</span><div class="step-text"><strong>Tasks.</strong> Small tasks, each with the files it touches, a check command, and the acceptance criteria it covers. Groups are marked PARALLEL or SEQUENTIAL. <strong>You approve.</strong></div></div>
+              <div class="step"><span class="step-n sn0">→</span><div class="step-text"><strong>Commit the spec, then run <code>/clear</code>.</strong> The skill offers to make the commit.</div></div>
             </div>
             <div class="prompt">
-              <div class="prompt-lbl">Invoke</div>
-              <div class="prompt-text">/sdd-feature <em>[feature name]</em></div>
+              <div class="prompt-lbl">Invoke: name first, description optional</div>
+              <div class="prompt-text">/sdd-feature <em>csv-export</em> <b>let users export any report as CSV</b></div>
             </div>
-          </div>
-
-          <div>
-            <div style="background:var(--bg); border:1px solid rgba(167,139,250,.2); border-radius:3px; padding:14px; font-family:var(--mono); font-size:11px; line-height:1.8; color:#64748b; margin-top:16px;">
-              <div style="color:var(--c4); margin-bottom:8px; font-size:10px; letter-spacing:2px; text-transform:uppercase;">Stack gap — example</div>
-              <div style="color:#94a3b8;">GAP — Queue mechanism</div>
-              <div>Not in current stack. Options:</div>
-              <div style="color:var(--c3);">A) In-memory — zero infra</div>
-              <div style="color:var(--c3);">B) BullMQ + Redis — persistent</div>
-              <div style="color:var(--c3);">C) SQS — managed, adds AWS dep</div>
-              <div style="margin-top:8px; color:var(--c2);">Which fits your deployment?</div>
-            </div>
-            <div style="margin-top:10px; padding:10px 14px; background:var(--surf2); border:1px solid var(--border); border-radius:3px; font-size:12px; color:var(--mute2); line-height:1.5;">
-              Once you decide, /sdd-validate writes it into <span style="color:var(--c1)">tech.md</span> — so future features inherit the decision.
-            </div>
-            <button class="skill-btn sk2" onclick="openModal('feature'); event.stopPropagation()" style="margin-top:10px;">
+            <button class="skill-btn sk2" onclick="openModal('feature'); event.stopPropagation()" style="margin-top:12px;">
               <div class="skill-icon">◈</div>
               <div class="skill-meta">
                 <div class="skill-name">/sdd-feature</div>
-                <div class="skill-hint">click to read SKILL.md</div>
+                <div class="skill-hint">read the full SKILL.md</div>
               </div>
             </button>
           </div>
+
+          <div>
+            <div class="code-block" style="margin-top:0;"><span class="ck">specs/csv-export/tasks.md</span>
+
+<span class="cv">## Group 1: PARALLEL</span>
+<span class="cv">- [ ] T1: Add CSV serializer</span>
+<span class="cm">  - Files: src/export/csv.ts, test/csv.test.ts</span>
+<span class="cm">  - Do: toCsv(rows, columns) per design.md</span>
+<span class="cg">  - Check: `npm test -- csv.test.ts`</span>
+<span class="cm">  - Covers: AC-1, AC-2</span>
+<span class="cv">- [ ] T2: Add Export button</span>
+<span class="cm">  - Files: src/ui/ReportToolbar.tsx, …</span>
+<span class="cg">  - Check: `npm test -- ReportToolbar`</span>
+<span class="cm">  - Covers: AC-3</span>
+
+<span class="cw">&lt;!-- GATE: Group 1 before Group 2 --&gt;</span>
+
+<span class="cv">## Group 2: SEQUENTIAL</span>
+<span class="cv">- [ ] T3: Wire button to serializer</span>
+<span class="cm">  - …</span></div>
+
+            <div style="margin-top:12px; background:var(--bg); border:1px solid rgba(167,139,250,.2); border-radius:3px; padding:14px; font-family:var(--mono); font-size:11px; line-height:1.8; color:#64748b;">
+              <div style="color:var(--c4); margin-bottom:8px; font-size:10px; letter-spacing:2px; text-transform:uppercase;">Stack gap: example</div>
+              <div style="color:#94a3b8;">GAP: large exports need a background job queue</div>
+              <div>Not in the current stack. Options:</div>
+              <div style="color:var(--c3);">A) Stream the response, no queue</div>
+              <div style="color:var(--c3);">B) BullMQ + Redis: persistent jobs</div>
+              <div style="color:var(--c3);">C) SQS: managed, adds an AWS dependency</div>
+              <div style="margin-top:8px; color:var(--c2);">Recommendation: A, because…</div>
+            </div>
+          </div>
         </div>
 
-        <div style="margin-top:16px; border-top:1px solid var(--border); padding-top:16px;">
-          <div style="font-family:var(--mono); font-size:10px; letter-spacing:2px; color:var(--mute2); text-transform:uppercase; margin-bottom:10px;">Implement phase — same session</div>
-          <div class="two-col">
+        <div class="infobox purple">
+          <strong>Why every task has a check:</strong> an agent that can run a test knows when it's done. Without one, "looks done" is the only signal, and you end up checking every task by hand. Checks are also why /sdd-implement can run a whole group of tasks without stopping to ask you.
+        </div>
+      </div>
+    </div>
+
+    <!-- IMPLEMENT -->
+    <div class="acc-card stripe-3" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <div class="acc-tag">W·02</div>
+        <div class="acc-meta">
+          <div class="acc-title">Implement</div>
+          <div class="acc-desc">The main conversation coordinates · one sdd-implementer agent per task · check → commit → tick</div>
+        </div>
+        <div class="acc-toggle">+</div>
+      </div>
+      <div class="acc-body">
+        <div class="chips">
+          <span class="chip ok">plan first, then your approval</span>
+          <span class="chip ok">one commit per task</span>
+          <span class="chip ok">resumes where it stopped</span>
+          <span class="chip warn">stops at blockers</span>
+        </div>
+
+        <div class="two-col">
+          <div>
             <div class="steps">
-              <div class="step"><span class="step-n sn3">01</span><div class="step-text"><strong>Continue same session</strong> — tasks.md is already loaded. No context reload needed.</div></div>
-              <div class="step"><span class="step-n sn3">02</span><div class="step-text"><strong>Tasks executed in order</strong>, atomic commit after each. Stop and correct if output drifts from spec.</div></div>
-              <div class="step"><span class="step-n sn3">03</span><div class="step-text"><strong>Do not start Session 3</strong> until all tasks are complete and committed.</div></div>
+              <div class="step"><span class="step-n sn3">01</span><div class="step-text"><strong>Load and check.</strong> Confirms all three spec files exist and are committed, skips tasks that are already ticked, and checks every task has Files and Check lines.</div></div>
+              <div class="step"><span class="step-n sn3">02</span><div class="step-text"><strong>Plan.</strong> Lists the groups, which tasks run in parallel, and each task's check. <strong>You approve.</strong></div></div>
+              <div class="step"><span class="step-n sn3">03</span><div class="step-text"><strong>Dispatch.</strong> Each task goes to a new sdd-implementer agent that sees only the spec and the code. Tasks in a PARALLEL group run at the same time.</div></div>
+              <div class="step"><span class="step-n sn3">04</span><div class="step-text"><strong>Verify and commit.</strong> The coordinator re-runs the task's check, makes sure only the expected files changed, ticks the task and commits <code>feat(csv-export): … [T1]</code>.</div></div>
+              <div class="step"><span class="step-n sn3">05</span><div class="step-text"><strong>Wrap up.</strong> Runs the full test suite and offers <code>/code-review</code> to look for bugs. STATE.md shows the feature as awaiting validation.</div></div>
             </div>
-            <div>
-              <div class="prompt">
-                <div class="prompt-lbl">Start implementation</div>
-                <div class="prompt-text">/sdd-implement <em>[feature name]</em></div>
+            <div class="prompt">
+              <div class="prompt-lbl">Invoke, after committing the spec and running /clear</div>
+              <div class="prompt-text">/sdd-implement <em>csv-export</em></div>
+            </div>
+          </div>
+          <div>
+            <div class="parallel-diagram" style="margin-bottom:0;"><span class="pd-phase">MAIN CONVERSATION</span>  <span style="color:var(--border2)">(coordinator)</span>
+  plan → ✋ you approve
+  │
+  ├─ <span class="pd-feat">sdd-implementer</span> T1 ─┐  <span style="color:var(--border2)">PARALLEL</span>
+  ├─ <span class="pd-feat">sdd-implementer</span> T2 ─┘
+  │    each → report: DONE | BLOCKED
+  │
+  ├─ run check · commit [T1] · tick
+  ├─ run check · commit [T2] · tick
+<span class="pd-gate">  ── GATE ──</span>
+  ├─ <span class="pd-feat">sdd-implementer</span> T3
+  └─ run check · commit [T3] · tick</div>
+            <button class="skill-btn sk3" onclick="openModal('implement'); event.stopPropagation()" style="margin-top:12px;">
+              <div class="skill-icon">▶</div>
+              <div class="skill-meta">
+                <div class="skill-name">/sdd-implement</div>
+                <div class="skill-hint">read the full SKILL.md</div>
               </div>
-              <button class="skill-btn sk3" onclick="openModal('implement'); event.stopPropagation()" style="margin-top:10px;">
-                <div class="skill-icon">▶</div>
-                <div class="skill-meta">
-                  <div class="skill-name">/sdd-implement</div>
-                  <div class="skill-hint">click to read SKILL.md</div>
-                </div>
-              </button>
+            </button>
+            <div class="infobox warn">
+              <strong>When an agent reports BLOCKED</strong> (a stack gap, a contradiction in the spec, or a check that can't pass), the coordinator stops and asks you. Agents can't ask you questions directly, so they report back instead of guessing.
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SESSION 3 VALIDATE -->
+    <!-- VALIDATE -->
     <div class="acc-card stripe-4" onclick="toggleAcc(this)">
       <div class="acc-header">
-        <div class="acc-tag">S·03</div>
+        <div class="acc-tag">W·03</div>
         <div class="acc-meta">
           <div class="acc-title">Validate</div>
-          <div class="acc-desc">Spec conformance · steering audit · STATE.md · CHANGELOG · README · package.json</div>
+          <div class="acc-desc">Independent pass/fail per acceptance criterion · then steering docs · STATE.md · CHANGELOG · README · version</div>
         </div>
         <div class="acc-toggle">+</div>
       </div>
       <div class="acc-body">
         <div class="chips">
-          <span class="chip ok">fresh session — clean context</span>
-          <span class="chip warn">phase 1 is a hard gate</span>
-          <span class="chip ok">can be run by another dev</span>
+          <span class="chip ok">same session is fine</span>
+          <span class="chip warn">the first step is a hard stop</span>
+          <span class="chip ok">anyone on the team can run it</span>
         </div>
         <div class="two-col">
           <div>
-            <div class="steps" style="margin-top:16px;">
-              <div class="step"><span class="step-n sn4">P1</span><div class="step-text"><strong>Spec conformance</strong> — each AC verified. Any failure stops the skill. No housekeeping until all pass.</div></div>
-              <div class="step"><span class="step-n sn4">P2</span><div class="step-text"><strong>Steering audit</strong> — structure.md and tech.md updated, including stack gap decisions made during design.</div></div>
-              <div class="step"><span class="step-n sn4">P3</span><div class="step-text"><strong>STATE.md</strong> — feature marked implemented or abandoned. Abandoned tasks noted with reason. Hash → HEAD.</div></div>
-              <div class="step"><span class="step-n sn4">P4</span><div class="step-text"><strong>Metadata</strong> — CHANGELOG, README, package.json updated only if they exist. Semver bump confirmed with you.</div></div>
+            <div class="steps">
+              <div class="step"><span class="step-n sn4">P1</span><div class="step-text"><strong>Conformance.</strong> sdd-reviewer, a read-only agent that never saw the implementation, checks each acceptance criterion with evidence and runs the full test suite. <strong>Any failure stops here.</strong></div></div>
+              <div class="step"><span class="step-n sn4">P2</span><div class="step-text"><strong>Steering docs.</strong> Updates structure.md and tech.md where the feature changed them, including stack-gap decisions.</div></div>
+              <div class="step"><span class="step-n sn4">P3</span><div class="step-text"><strong>STATE.md.</strong> Moves the feature to Done and sets the hash to HEAD.</div></div>
+              <div class="step"><span class="step-n sn4">P4</span><div class="step-text"><strong>Metadata.</strong> Updates the CHANGELOG, README and version, only where those files exist. Asks before a version bump.</div></div>
+            </div>
+            <div class="prompt">
+              <div class="prompt-lbl">Invoke</div>
+              <div class="prompt-text">/sdd-validate <em>csv-export</em></div>
             </div>
           </div>
           <div>
-            <button class="skill-btn sk4" onclick="openModal('validate'); event.stopPropagation()" style="margin-top:16px;">
+            <div class="code-block" style="margin-top:0;"><span class="ck">sdd-reviewer verdict</span>
+
+<span class="cv">| AC   | Verdict | Evidence                      |</span>
+<span class="cg">| AC-1 | PASS    | csv.test.ts › escapes commas  |</span>
+<span class="cg">| AC-2 | PASS    | csv.test.ts › header row      |</span>
+<span class="cw">| AC-3 | FAIL    | no test for empty report      |</span>
+
+<span class="cv">Commits:    one per task</span>
+<span class="cv">Scope:      ok</span>
+<span class="cv">Test suite: npm test → pass</span>
+
+<span class="cw">OVERALL: FAIL</span></div>
+            <button class="skill-btn sk4" onclick="openModal('validate'); event.stopPropagation()" style="margin-top:12px;">
               <div class="skill-icon">✓</div>
               <div class="skill-meta">
                 <div class="skill-name">/sdd-validate</div>
-                <div class="skill-hint">click to read SKILL.md</div>
+                <div class="skill-hint">read the full SKILL.md</div>
               </div>
             </button>
-            <div style="margin-top:12px; padding:14px; background:var(--surf2); border:1px solid var(--border); border-radius:3px;">
-              <div style="font-family:var(--mono); font-size:10px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-bottom:10px;">Validation report</div>
-              <div style="display:flex; flex-direction:column; gap:6px; font-family:var(--mono); font-size:11px; color:var(--mute2);">
-                <div><span style="color:var(--c3)">✓ / ✗</span>  per acceptance criterion</div>
-                <div><span style="color:var(--c3)">→</span>  steering docs: updated / no change</div>
-                <div><span style="color:var(--c3)">→</span>  STATE.md: updated (new hash)</div>
-                <div><span style="color:var(--c3)">→</span>  CHANGELOG: updated / not found</div>
-                <div><span style="color:var(--c3)">→</span>  README: updated / no changes</div>
-                <div><span style="color:var(--c3)">→</span>  package.json: bumped / skipped</div>
-              </div>
-            </div>
-            <div class="prompt" style="margin-top:10px;">
-              <div class="prompt-lbl">Invoke</div>
-              <div class="prompt-text">/sdd-validate <em>specs/[feature]/</em></div>
-            </div>
           </div>
+        </div>
+        <div class="infobox info">
+          <strong>Why it no longer needs a new session:</strong> previously, validation needed a fresh session so the work wasn't judged by the conversation that built it. The reviewer agent now provides that fresh view automatically. The housekeeping that follows needs your answers, so it stays in the main conversation.
         </div>
       </div>
     </div>
@@ -289,68 +271,70 @@
   </div><!-- /accordion -->
 
   <!-- PARALLEL -->
-  <div class="divider">Advanced — Multiple features in parallel</div>
+  <div class="divider">Several features in parallel</div>
 
   <div class="parallel-card">
-    <div style="font-size:18px; font-weight:700; color:var(--c5); letter-spacing:-.3px; margin-bottom:6px;">Parallel Feature Implementation</div>
-    <div style="font-family:var(--mono); font-size:11px; color:var(--mute2); margin-bottom:24px; letter-spacing:.5px;">Spec all features first · implement simultaneously in isolated worktrees · validate after merge</div>
+    <div style="font-size:18px; font-weight:700; color:var(--c5); letter-spacing:-.3px; margin-bottom:6px;">Parallel features in worktrees</div>
+    <div style="font-family:var(--mono); font-size:11px; color:var(--mute2); margin-bottom:24px; letter-spacing:.5px;">Spec each feature · commit the specs · implement them at once in separate copies of the repo · merge · validate each</div>
 
-    <div class="parallel-diagram"><span class="pd-phase">SPEC PHASE</span>  <span style="color:var(--border2)">(sequential — needs your approval)</span>
-  Session A  →  /sdd-feature <span class="pd-feat">feature-A</span>  →  approve specs/feature-A/tasks.md
-  Session B  →  /sdd-feature <span class="pd-feat">feature-B</span>  →  approve specs/feature-B/tasks.md
-  Session C  →  /sdd-feature <span class="pd-feat">feature-C</span>  →  approve specs/feature-C/tasks.md
+    <div class="parallel-diagram"><span class="pd-phase">SPEC</span>  <span style="color:var(--border2)">(one at a time, with your approval)</span>
+  /sdd-feature <span class="pd-feat">feature-a</span>  →  commit spec
+  /sdd-feature <span class="pd-feat">feature-b</span>  →  commit spec
 
-<span class="pd-gate">IMPLEMENT PHASE</span>  <span style="color:var(--border2)">(parallel — all run simultaneously)</span>
-  worktree/<span class="pd-feat">feature-A</span>  ←  backend-builder agent  →  atomic commits
-  worktree/<span class="pd-feat">feature-B</span>  ←  backend-builder agent  →  atomic commits
-  worktree/<span class="pd-feat">feature-C</span>  ←  backend-builder agent  →  atomic commits
+<span class="pd-gate">IMPLEMENT</span>  <span style="color:var(--border2)">(/sdd-implement feature-a and feature-b)</span>
+  worktree <span class="pd-feat">feature-a</span>  ←  feature agent  →  sdd-implementer per task  →  commits
+  worktree <span class="pd-feat">feature-b</span>  ←  feature agent  →  sdd-implementer per task  →  commits
 
-<span class="pd-gate">GATE</span>  <span style="color:var(--border2)">— merge each branch to main, then validate separately</span>
+<span class="pd-gate">MERGE</span>  <span style="color:var(--border2)">you review and merge each branch into main</span>
 
-<span class="pd-gate">VALIDATE PHASE</span>  <span style="color:var(--border2)">(one session per merged feature)</span>
-  Session X  →  /sdd-validate  <span class="pd-feat">feature-A</span>
-  Session Y  →  /sdd-validate  <span class="pd-feat">feature-B</span>
-  Session Z  →  /sdd-validate  <span class="pd-feat">feature-C</span></div>
+<span class="pd-gate">VALIDATE</span>  <span style="color:var(--border2)">(on main, one per feature)</span>
+  /sdd-validate <span class="pd-feat">feature-a</span>
+  /sdd-validate <span class="pd-feat">feature-b</span></div>
 
-    <div class="prompt">
-      <div class="prompt-lbl">Orchestrator prompt — /sdd-implement handles this automatically</div>
-      <div class="prompt-text">/sdd-implement <em>feature-A</em> and <em>feature-B</em> and <em>feature-C</em></div>
+    <div class="two-col" style="margin-top:0;">
+      <div>
+        <div class="cmd" style="margin-top:0;">
+          <div class="cmd-head"><span>.claude/settings.json (recommended)</span><button class="copy-btn" data-copy-target="baseref">copy</button></div>
+          <pre class="code-block" id="baseref">{
+  "worktree": { "baseRef": "head" }
+}</pre>
+        </div>
+        <div class="infobox warn">
+          <strong>Why this setting:</strong> by default, a new worktree starts from your <em>remote</em> default branch, so specs you've only committed locally would be missing. <code>"head"</code> starts it from your current commit instead. /sdd-implement checks this and offers to add the setting.
+        </div>
+      </div>
+      <div>
+        <div class="cmd" style="margin-top:0;">
+          <div class="cmd-head"><span>.worktreeinclude (optional)</span><button class="copy-btn" data-copy-target="wtinclude">copy</button></div>
+          <pre class="code-block" id="wtinclude">.env
+.env.local</pre>
+        </div>
+        <div class="infobox info">
+          A worktree is a fresh checkout without your gitignored files. List the ones the tests need (such as <code>.env</code>) in <code>.worktreeinclude</code> at the project root, and they're copied into each new worktree. Also make sure <code>.claude/worktrees/</code> is in .gitignore.
+        </div>
+      </div>
     </div>
 
     <div class="conds">
       <div class="cond ok">
-        <div class="cond-label">✓ required before parallel</div>
-        <div class="cond-text">All tasks.md approved. Features touch different files — no overlap. Stack gaps resolved in spec phase.</div>
+        <div class="cond-label">✓ before running in parallel</div>
+        <div class="cond-text">Every spec is approved and committed, and every stack gap was resolved while writing the spec.</div>
       </div>
       <div class="cond ok">
-        <div class="cond-label">✓ worktree isolation</div>
-        <div class="cond-text">/sdd-implement audits file overlap automatically and proposes parallel vs sequential accordingly.</div>
+        <div class="cond-label">✓ overlap is checked for you</div>
+        <div class="cond-text">/sdd-implement compares the features' Files lists. Features that share files run one after another, in an order it proposes.</div>
       </div>
       <div class="cond warn">
-        <div class="cond-label">⚠ if features share files</div>
-        <div class="cond-text">/sdd-implement detects this and proposes sequential execution with ordering rationale.</div>
+        <div class="cond-label">⚠ merging is your step</div>
+        <div class="cond-text">Each feature ends up on its own branch. Review and merge each one. Nothing is merged automatically.</div>
       </div>
       <div class="cond warn">
-        <div class="cond-label">⚠ validate after merge</div>
-        <div class="cond-text">Run /sdd-validate on main after each branch merges — STATE.md must reflect the real merged state.</div>
+        <div class="cond-label">⚠ validate after merging</div>
+        <div class="cond-text">Run /sdd-validate on main after each merge, so STATE.md describes the code that actually shipped.</div>
       </div>
     </div>
   </div>
 
-</div>
-
-<!-- MODAL -->
-<div class="modal-bg" id="modal" onclick="closeModal()">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modal-head">
-      <div class="modal-title" id="modal-title"></div>
-      <div class="modal-actions">
-        <button class="modal-download" id="modal-download" onclick="downloadModalMarkdown()">↓ download .md</button>
-        <button class="modal-close" onclick="closeModal()">✕ close</button>
-      </div>
-    </div>
-    <div class="modal-body"><div id="modal-content"></div></div>
-  </div>
 </div>
 
 <script src="scripts/skills-data.js"></script>
