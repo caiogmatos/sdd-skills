@@ -3,7 +3,7 @@
 Read `requirements.md` and `design.md` in this folder first. Names, signatures, regexes and messages come from design.md. Use only `node:` built-in modules, with no `package.json`. All files are CommonJS `.js`.
 
 ## Group 1: PARALLEL
-- [ ] T1: Build the frontmatter parser and schema check
+- [x] T1: Build the frontmatter parser and schema check
   - Files: `tools/lib/frontmatter.js`, `tools/test/frontmatter.test.js`
   - Do:
     - Implement `parseFrontmatter(text)` and `checkSchema(kind, expectedName, parsed)`, following the "tools/lib/frontmatter.js" section of design.md. That covers the YAML subset, every listed error with its 1-based line, the per-kind schema rules and the name match.
