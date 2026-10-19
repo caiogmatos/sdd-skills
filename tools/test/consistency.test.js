@@ -60,6 +60,31 @@ test('checkNav', () => {
   assert.deepEqual(c.checkNav(unlisted, pages).map((p) => p.page), ['index.html']);
 });
 
+test('data-modal keys are checked', () => {
+  const f = c.findOpenModalKeys('<a data-modal="reveiwer">\n<b data-modal=\'foo\'>');
+  assert.deepEqual(f, [{ key: 'reveiwer', line: 1 }, { key: 'foo', line: 2 }]);
+  const p = c.checkOpenModalKeys(f, { foo: {} });
+  assert.equal(p.length, 1);
+  assert.equal(p[0].line, 1);
+});
+
+test('checkNav duplicate, order, dead link and missing reference', () => {
+  const pages = ['index.html', 'a.html'];
+  const dup = { 'index.html': ['index.html', 'a.html'], 'a.html': ['index.html', 'a.html', 'a.html'] };
+  assert.ok(c.checkNav(dup, pages).some((p) => p.page === 'a.html' && /duplicate nav link a\.html/.test(p.problem)));
+  const three = ['index.html', 'a.html', 'b.html'];
+  const swapped = { 'index.html': three, 'a.html': ['index.html', 'b.html', 'a.html'], 'b.html': three };
+  assert.ok(c.checkNav(swapped, three).some((p) => /different order/.test(p.problem)));
+  const dead = { 'index.html': ['index.html', 'a.html', 'gone.html#x'], 'a.html': ['index.html', 'a.html', 'gone.html#x'] };
+  const dp = c.checkNav(dead, pages);
+  assert.equal(dp.length, 1);
+  assert.equal(dp[0].page, 'index.html');
+  assert.match(dp[0].problem, /does not exist/);
+  const noRef = c.checkNav({ 'a.html': ['a.html'] }, ['a.html']);
+  assert.equal(noRef.length, 1);
+  assert.match(noRef[0].problem, /could not be compared/);
+});
+
 test('parseInstallNames on the real global.html', () => {
   const p = c.parseInstallNames(read('global.html'));
   for (const side of ['ps', 'sh']) {

@@ -129,7 +129,7 @@ b"`, `"é"`, `"C:\tools"` and a quoted list item.
   - Check: `node --test tools/test/frontmatter.test.js`
   - Covers: AC-7, AC-8
 
-- [ ] T8: Close the nav and modal-key gaps
+- [x] T8: Close the nav and modal-key gaps
   - Files: `tools/lib/consistency.js`, `tools/test/consistency.test.js`, `.claude/steering/structure.md`
   - Do:
     - Apply the "Review fixes > consistency.js" section of design.md:

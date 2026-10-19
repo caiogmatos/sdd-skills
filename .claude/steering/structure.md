@@ -34,7 +34,7 @@ sdd-skills/
 Renaming or adding a skill, agent or template means updating all of these:
 1. `scripts/skills-data.js`: the `path`, `download` and `installTo` entries.
 2. `global.html`: the PowerShell and sh install commands (skill names, `skills/sdd-$n/SKILL.md`, agent names, `agents/$a.md`).
-3. `openModal('<key>')` calls on the pages.
+3. `openModal('<key>')` calls on the pages. The check reads modal keys from `openModal('...')` calls and `data-modal` attributes.
 4. Prose and directory trees on `index.html`, `global.html`, `skills.html` and `agents.html`.
 5. Links inside the skills to `global.html`.
 6. `tools/lib/consistency.js` depends on `id="install-ps"` and `id="install-sh"` in `global.html` and on the `site-nav` markup.

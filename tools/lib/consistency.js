@@ -33,12 +33,12 @@ function checkRegistry(SDD_FILES, existingPaths, contentPaths) {
 
 function findOpenModalKeys(text) {
   const src = String(text).replace(/\r\n/g, '\n');
-  const re = /openModal\(\s*['"]([^'"]+)['"]\s*\)/g;
+  const re = /openModal\(\s*['"]([^'"]+)['"]\s*\)|\bdata-modal\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
   const out = [];
   let m;
   while ((m = re.exec(src))) {
     const line = src.slice(0, m.index).split('\n').length;
-    out.push({ key: m[1], line });
+    out.push({ key: m[1] !== undefined ? m[1] : m[2] !== undefined ? m[2] : m[3], line });
   }
   return out;
 }
@@ -65,6 +65,9 @@ function extractNavLinks(html) {
 
 function checkNav(navByPage, pages, referencePage = 'index.html') {
   const out = [];
+  if (!pages.includes(referencePage)) {
+    return [{ page: referencePage, problem: `${referencePage} is missing, so the nav could not be compared` }];
+  }
   const ref = navByPage[referencePage];
   for (const page of pages) {
     if (!navByPage[page]) {
@@ -72,17 +75,32 @@ function checkNav(navByPage, pages, referencePage = 'index.html') {
     }
   }
   if (!ref) return out;
+  const dupes = (links) => links.filter((h, i) => links.indexOf(h) !== i)
+    .filter((h, i, a) => a.indexOf(h) === i);
+  for (const h of ref) {
+    if (/^(?:[a-z][a-z0-9+.-]*:|\/)/i.test(h)) continue;
+    const target = h.split('#')[0].split('?')[0];
+    if (target.endsWith('.html') && !pages.includes(target)) {
+      out.push({ page: referencePage, problem: `nav link ${h} points to a page that does not exist` });
+    }
+  }
   for (const page of pages) {
     const links = navByPage[page];
-    if (!links || page === referencePage) continue;
+    if (!links) continue;
+    const d = dupes(links);
+    for (const h of d) out.push({ page, problem: `duplicate nav link ${h}` });
+    if (page === referencePage) continue;
+    let clean = d.length === 0;
     for (const h of ref) {
-      if (!links.includes(h)) out.push({ page, problem: `nav is missing link to ${h}` });
+      if (!links.includes(h)) { out.push({ page, problem: `nav is missing link to ${h}` }); clean = false; }
     }
     for (const h of links) {
-      if (!ref.includes(h)) out.push({ page, problem: `nav has extra link to ${h} (not in ${referencePage})` });
+      if (!ref.includes(h)) {
+        out.push({ page, problem: `nav has extra link to ${h} (not in ${referencePage})` });
+        clean = false;
+      }
     }
-    if (ref.length === links.length && ref.every((h) => links.includes(h)) &&
-        ref.some((h, i) => links[i] !== h)) {
+    if (clean && ref.some((h, i) => links[i] !== h)) {
       out.push({ page, problem: `nav links are in a different order than ${referencePage}` });
     }
   }
