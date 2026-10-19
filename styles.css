@@ -243,7 +243,14 @@ body::before {
   border-radius: 2px; white-space: nowrap;
 }
 
-.acc-meta { display: flex; flex-direction: column; gap: 4px; }
+/* accordions whose tags are command names, e.g. /sdd-implement */
+.accordion.wide-tags .acc-header { grid-template-columns: 150px 1fr auto; }
+@media (max-width: 640px) {
+  .accordion.wide-tags .acc-header { grid-template-columns: 1fr auto; gap: 10px 16px; }
+  .accordion.wide-tags .acc-tag { grid-column: 1 / -1; justify-self: start; }
+}
+
+.acc-meta { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .acc-title { font-size: 16px; font-weight: 600; letter-spacing: -.3px; }
 .acc-desc { font-family: var(--mono); font-size: 11px; color: var(--mute2); letter-spacing: .5px; }
 
