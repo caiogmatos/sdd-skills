@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDD with Claude Code</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="nav-brand">SDD · Claude Code</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="global.html">Global Setup</a></li>
+    <li><a href="new-project.html">New Project</a></li>
+    <li><a href="existing-project.html">Existing Project</a></li>
+    <li><a href="workflow.html">Workflow</a></li>
+    <li><a href="skills.html">Skills</a></li>
+  </ul>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <div class="eyebrow">Reference · Claude Code</div>
+    <h1 class="page-title">Spec-Driven<br><em class="t1">Development</em></h1>
+    <div class="page-subtitle">
+      <span><span class="dot" style="background:var(--c1)"></span>6 reusable skills</span>
+      <span><span class="dot" style="background:var(--c2)"></span>Research → Plan → Implement</span>
+      <span><span class="dot" style="background:var(--c3)"></span>Parallel worktree execution</span>
+      <span><span class="dot" style="background:var(--c4)"></span>STATE.md + hash anchoring</span>
+    </div>
+  </div>
+
+  <div class="divider">What is SDD</div>
+
+  <p style="font-size:14px; color:var(--mute2); line-height:1.8; max-width:680px;">
+    Spec-Driven Development is a workflow for AI-assisted coding where <strong style="color:var(--text)">no code is written until a spec is approved</strong>.
+    Every feature starts with requirements, moves through design (including explicit stack gap detection),
+    then breaks into atomic tasks. Claude Code executes the tasks — you review the decisions.
+    STATE.md with a git hash anchor keeps the whole team in sync, even with peers who don't use AI tooling.
+  </p>
+
+  <div class="divider">The RPI Loop</div>
+
+  <div class="flow-ribbon">
+    <div class="flow-node">
+      <div class="flow-pill p2">Research</div>
+      <div class="flow-label">read codebase</div>
+    </div>
+    <div class="flow-gate">→</div>
+    <div class="flow-node">
+      <div class="flow-pill p6">Plan</div>
+      <div class="flow-label">✋ you approve</div>
+    </div>
+    <div class="flow-gate">→</div>
+    <div class="flow-node">
+      <div class="flow-pill p3">Implement</div>
+      <div class="flow-label">claude executes</div>
+    </div>
+    <div class="flow-gate">→</div>
+    <div class="flow-node">
+      <div class="flow-pill p4">Validate</div>
+      <div class="flow-label">✋ you approve</div>
+    </div>
+  </div>
+
+  <div class="divider">Where to start</div>
+
+  <div class="nav-cards">
+
+    <a href="global.html" class="nav-card nc1">
+      <div class="nc-eyebrow">Step 0 — Once ever</div>
+      <div class="nc-title">Global Setup</div>
+      <div class="nc-desc">Configure your personal ~/.claude/CLAUDE.md, install skills, choose your default model. Applies to every project on your machine.</div>
+      <div class="nc-arrow">→</div>
+    </a>
+
+    <a href="new-project.html" class="nav-card nc6">
+      <div class="nc-eyebrow">Greenfield</div>
+      <div class="nc-title">New Project</div>
+      <div class="nc-desc">Starting from scratch. /sdd-startup guides you through purpose → stack trade-offs → steering docs. No code until decisions are confirmed.</div>
+      <div class="nc-arrow">→</div>
+    </a>
+
+    <a href="existing-project.html" class="nav-card nc7">
+      <div class="nc-eyebrow">Brownfield</div>
+      <div class="nc-title">Existing Project</div>
+      <div class="nc-desc">Codebase already exists. /sdd-checkup audits health, /sdd-bootstrap reverse-engineers CLAUDE.md and steering docs from what's there.</div>
+      <div class="nc-arrow">→</div>
+    </a>
+
+    <a href="workflow.html" class="nav-card nc2">
+      <div class="nc-eyebrow">The Recipe</div>
+      <div class="nc-title">Full Workflow</div>
+      <div class="nc-desc">Session-by-session recipe. Spec → Implement → Validate. Includes parallel worktree execution for multiple features simultaneously.</div>
+      <div class="nc-arrow">→</div>
+    </a>
+
+    <a href="skills.html" class="nav-card nc3">
+      <div class="nc-eyebrow">Reference</div>
+      <div class="nc-title">All Skills</div>
+      <div class="nc-desc">Read the full SKILL.md for every skill: sdd-startup, sdd-bootstrap, sdd-checkup, sdd-feature, sdd-implement, sdd-validate.</div>
+      <div class="nc-arrow">→</div>
+    </a>
+
+  </div>
+
+  <div class="divider">Skills overview</div>
+
+  <div class="skill-grid">
+    <div class="skill-card sc6">
+      <div class="skill-card-name">/sdd-startup</div>
+      <div class="skill-card-desc">Greenfield only. Elicits project purpose and guides stack decisions via structured trade-off conversation.</div>
+      <div class="skill-card-invoke">invoke → new project, no code yet</div>
+    </div>
+    <div class="skill-card sc1">
+      <div class="skill-card-name">/sdd-bootstrap</div>
+      <div class="skill-card-desc">Existing codebase. Reverse-engineers CLAUDE.md and steering docs. Asks before inventing anything.</div>
+      <div class="skill-card-invoke">invoke → once per project</div>
+    </div>
+    <div class="skill-card sc7">
+      <div class="skill-card-name">/sdd-checkup</div>
+      <div class="skill-card-desc">Audits project health: context files, STATE.md drift, orphaned specs, desynced metadata. Reports first, fixes after approval.</div>
+      <div class="skill-card-invoke">invoke → any dormant or unfamiliar project</div>
+    </div>
+    <div class="skill-card sc2">
+      <div class="skill-card-name">/sdd-feature</div>
+      <div class="skill-card-desc">Requirements → Design (with stack gap detection) → Tasks. Three human approval gates before any code.</div>
+      <div class="skill-card-invoke">invoke → before implementing any feature</div>
+    </div>
+    <div class="skill-card sc3">
+      <div class="skill-card-name">/sdd-implement</div>
+      <div class="skill-card-desc">Implements one or multiple features. Audits overlap, proposes parallel worktree or sequential execution, presents plan first.</div>
+      <div class="skill-card-invoke">invoke → after tasks.md is approved</div>
+    </div>
+    <div class="skill-card sc4">
+      <div class="skill-card-name">/sdd-validate</div>
+      <div class="skill-card-desc">Verifies spec conformance, updates steering docs, marks STATE.md, updates CHANGELOG/README/package.json. Fresh session only.</div>
+      <div class="skill-card-invoke">invoke → after all tasks complete</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="scripts/nav.js"></script>
+</body>
+</html>

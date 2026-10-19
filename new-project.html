@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Project — SDD</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="nav-brand">SDD · Claude Code</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="global.html">Global Setup</a></li>
+    <li><a href="new-project.html">New Project</a></li>
+    <li><a href="existing-project.html">Existing Project</a></li>
+    <li><a href="workflow.html">Workflow</a></li>
+    <li><a href="skills.html">Skills</a></li>
+  </ul>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <div class="eyebrow">Greenfield</div>
+    <h1 class="page-title">Starting a<br><em class="t6">New Project</em></h1>
+    <div class="page-subtitle">
+      <span><span class="dot" style="background:var(--c6)"></span>/sdd-startup</span>
+      <span><span class="dot" style="background:var(--c1)"></span>Stack trade-offs</span>
+      <span><span class="dot" style="background:var(--c2)"></span>Steering docs generated</span>
+    </div>
+  </div>
+
+  <div class="flow-ribbon">
+    <div class="flow-node">
+      <div class="flow-pill p6">Purpose</div>
+      <div class="flow-label">describe project</div>
+    </div>
+    <div class="flow-gate">→</div>
+    <div class="flow-node">
+      <div class="flow-pill p2">Stack</div>
+      <div class="flow-label">✋ trade-off conversation</div>
+    </div>
+    <div class="flow-gate">→</div>
+    <div class="flow-node">
+      <div class="flow-pill p1">Confirm</div>
+      <div class="flow-label">✋ you approve</div>
+    </div>
+    <div class="flow-gate">→</div>
+    <div class="flow-node">
+      <div class="flow-pill p3">Generate</div>
+      <div class="flow-label">4 context files</div>
+    </div>
+    <div class="flow-gate">→</div>
+    <div class="flow-node">
+      <div class="flow-pill p2">Feature</div>
+      <div class="flow-label">/sdd-feature</div>
+    </div>
+  </div>
+
+  <div class="accordion">
+
+    <!-- STARTUP -->
+    <div class="acc-card stripe-6" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <div class="acc-tag">S·01</div>
+        <div class="acc-meta">
+          <div class="acc-title">/sdd-startup</div>
+          <div class="acc-desc">Elicit purpose → guide stack decisions via trade-off conversation → generate context files</div>
+        </div>
+        <div class="acc-toggle">+</div>
+      </div>
+      <div class="acc-body">
+        <div class="chips">
+          <span class="chip ok">no code written at any point</span>
+          <span class="chip warn">approval gate after stack confirmation</span>
+          <span class="chip ok">commit output before first feature</span>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="steps" style="margin-top:16px;">
+              <div class="step"><span class="step-n sn6">1</span><div class="step-text"><strong>Describe project</strong> — 2–3 sentences: what it does, who uses it, interaction model (API / UI / CLI / worker)</div></div>
+              <div class="step"><span class="step-n sn6">2</span><div class="step-text"><strong>Stack conversation</strong> — Claude presents options with trade-offs and a recommendation for each area. You decide.</div></div>
+              <div class="step"><span class="step-n sn6">3</span><div class="step-text"><strong>Confirm summary</strong> — Claude presents all decisions in one block. You approve or adjust.</div></div>
+              <div class="step"><span class="step-n sn6">4</span><div class="step-text"><strong>Files generated</strong> — product.md, tech.md, structure.md, then CLAUDE.md (last, with @imports, no duplicates)</div></div>
+              <div class="step"><span class="step-n sn6">5</span><div class="step-text"><strong>Commit all 4 files</strong> — "chore: add SDD context files" — then start /sdd-feature for first feature</div></div>
+            </div>
+          </div>
+          <div>
+            <button class="skill-btn sk6" onclick="openModal('startup'); event.stopPropagation()" style="margin-top:16px;">
+              <div class="skill-icon">✦</div>
+              <div class="skill-meta">
+                <div class="skill-name">/sdd-startup</div>
+                <div class="skill-hint">click to read SKILL.md</div>
+              </div>
+            </button>
+
+            <div style="margin-top:12px; padding:14px; background:var(--surf2); border:1px solid var(--border); border-radius:3px;">
+              <div style="font-family:var(--mono); font-size:10px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-bottom:10px;">Stack areas covered</div>
+              <div style="display:flex; flex-direction:column; gap:6px; font-family:var(--mono); font-size:11px; color:var(--mute2);">
+                <div><span style="color:var(--c6)">2.1</span> Language and runtime</div>
+                <div><span style="color:var(--c6)">2.2</span> Framework</div>
+                <div><span style="color:var(--c6)">2.3</span> Data layer</div>
+                <div><span style="color:var(--c6)">2.4</span> Async / queue <span style="color:var(--muted)">(if implied)</span></div>
+                <div><span style="color:var(--c6)">2.5</span> Hosting and deployment</div>
+                <div><span style="color:var(--c6)">2.6</span> Testing strategy</div>
+                <div><span style="color:var(--c6)">2.7</span> Hard constraints <span style="color:var(--muted)">(open question)</span></div>
+              </div>
+            </div>
+
+            <div class="prompt" style="margin-top:12px;">
+              <div class="prompt-lbl">Invoke</div>
+              <div class="prompt-text">/sdd-startup</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="infobox purple" style="margin-top:16px;">
+          <strong>How trade-offs are presented:</strong> For each decision area, Claude lists 2–3 concrete options with one-line trade-offs, gives a labeled recommendation with reasoning, and waits for your choice before moving to the next area. You are never asked to pick from a blank slate.
+        </div>
+      </div>
+    </div>
+
+    <!-- OUTPUT FILES -->
+    <div class="acc-card stripe-1" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <div class="acc-tag">S·02</div>
+        <div class="acc-meta">
+          <div class="acc-title">Output — Context Files</div>
+          <div class="acc-desc">What gets generated and why each file exists separately</div>
+        </div>
+        <div class="acc-toggle">+</div>
+      </div>
+      <div class="acc-body">
+        <div class="two-col">
+          <div>
+            <div class="steps" style="margin-top:16px;">
+              <div class="step"><span class="step-n sn2">P</span><div class="step-text"><strong>.claude/steering/product.md</strong> — project purpose, users, interaction model, what success looks like</div></div>
+              <div class="step"><span class="step-n sn1">T</span><div class="step-text"><strong>.claude/steering/tech.md</strong> — every confirmed stack decision with reason chosen AND alternatives explicitly rejected</div></div>
+              <div class="step"><span class="step-n sn3">S</span><div class="step-text"><strong>.claude/steering/structure.md</strong> — proposed folder map for the confirmed stack. Evolves as project grows.</div></div>
+              <div class="step"><span class="step-n sn0">C</span><div class="step-text"><strong>CLAUDE.md</strong> (generated last) — stack one-liner, conventions, NEVER list, three @import lines. No duplication of steering content.</div></div>
+            </div>
+          </div>
+          <div>
+            <div class="code-block" style="margin-top:16px;"><span class="ck">CLAUDE.md</span>  <span class="cm">← generated last</span>
+
+<span class="cv"># Stack</span>
+<span class="cv">Node.js · Fastify · stateless</span>
+
+<span class="cv"># Conventions</span>
+<span class="cv">- Validate with Zod</span>
+<span class="cv">- Log with Pino</span>
+<span class="cv">- Atomic commits per task</span>
+
+<span class="cv"># NEVER</span>
+<span class="cv">- In-memory state</span>
+<span class="cv">- Unapproved libs</span>
+<span class="cv">- Secrets in repo</span>
+
+<span class="cg">See @.claude/steering/product.md</span>
+<span class="cg">See @.claude/steering/tech.md</span>
+<span class="cg">See @.claude/steering/structure.md</span></div>
+
+            <div class="infobox warn" style="margin-top:12px;">
+              <strong>Why CLAUDE.md last?</strong> Writing it after the steering docs forces the skill to treat them as the source of truth and prevents duplicating context, rationale, or folder maps into the instructions file.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEXT STEP -->
+    <div class="acc-card stripe-2" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <div class="acc-tag">S·03</div>
+        <div class="acc-meta">
+          <div class="acc-title">Next — First Feature</div>
+          <div class="acc-desc">After context files are committed, start the spec cycle for your first feature</div>
+        </div>
+        <div class="acc-toggle">+</div>
+      </div>
+      <div class="acc-body">
+        <div class="steps" style="margin-top:16px;">
+          <div class="step"><span class="step-n sn2">01</span><div class="step-text"><strong>Commit all 4 context files</strong> — "chore: add SDD context files"</div></div>
+          <div class="step"><span class="step-n sn2">02</span><div class="step-text"><strong>Start a new session</strong> — CLAUDE.md and steering docs load automatically via @imports</div></div>
+          <div class="step"><span class="step-n sn2">03</span><div class="step-text"><strong>Invoke /sdd-feature</strong> — requirements → design → tasks. Three approval gates before any code.</div></div>
+        </div>
+        <div class="prompt">
+          <div class="prompt-lbl">Starting first feature</div>
+          <div class="prompt-text">/sdd-feature <em>[feature name]</em></div>
+        </div>
+        <div class="infobox info" style="margin-top:12px;">
+          You do not need to tell Claude to read CLAUDE.md — it loads automatically every session. The @import lines in CLAUDE.md pull the steering docs in too.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-actions">
+        <button class="modal-download" id="modal-download" onclick="downloadModalMarkdown()">↓ download .md</button>
+        <button class="modal-close" onclick="closeModal()">✕ close</button>
+      </div>
+    </div>
+    <div class="modal-body"><div id="modal-content"></div></div>
+  </div>
+</div>
+
+<script src="scripts/skills-data.js"></script>
+<script src="scripts/nav.js"></script>
+</body>
+</html>

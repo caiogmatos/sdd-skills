@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Existing Project — SDD</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="nav-brand">SDD · Claude Code</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="global.html">Global Setup</a></li>
+    <li><a href="new-project.html">New Project</a></li>
+    <li><a href="existing-project.html">Existing Project</a></li>
+    <li><a href="workflow.html">Workflow</a></li>
+    <li><a href="skills.html">Skills</a></li>
+  </ul>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <div class="eyebrow">Brownfield</div>
+    <h1 class="page-title">Existing<br><em class="t7">Project</em></h1>
+    <div class="page-subtitle">
+      <span><span class="dot" style="background:var(--c7)"></span>/sdd-checkup</span>
+      <span><span class="dot" style="background:var(--c1)"></span>/sdd-bootstrap</span>
+      <span><span class="dot" style="background:var(--c4)"></span>STATE.md + hash anchor</span>
+    </div>
+  </div>
+
+  <div class="flow-ribbon">
+    <div class="flow-node">
+      <div class="flow-pill p7">Checkup</div>
+      <div class="flow-label">audit health</div>
+    </div>
+    <div class="flow-gate">→</div>
+    <div class="flow-node">
+      <div class="flow-pill p1">Bootstrap</div>
+      <div class="flow-label">generate context</div>
+    </div>
+    <div class="flow-gate">→</div>
+    <div class="flow-node">
+      <div class="flow-pill p0">Commit</div>
+      <div class="flow-label">✋ approve + commit</div>
+    </div>
+    <div class="flow-gate">→</div>
+    <div class="flow-node">
+      <div class="flow-pill p4">STATE.md</div>
+      <div class="flow-label">with HEAD hash</div>
+    </div>
+    <div class="flow-gate">→</div>
+    <div class="flow-node">
+      <div class="flow-pill p2">Feature</div>
+      <div class="flow-label">/sdd-feature</div>
+    </div>
+  </div>
+
+  <div class="accordion">
+
+    <!-- CHECKUP -->
+    <div class="acc-card stripe-7" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <div class="acc-tag">E·01</div>
+        <div class="acc-meta">
+          <div class="acc-title">/sdd-checkup</div>
+          <div class="acc-desc">Run first on any unfamiliar or dormant project — detects what's missing before you do anything</div>
+        </div>
+        <div class="acc-toggle">+</div>
+      </div>
+      <div class="acc-body">
+        <div class="chips">
+          <span class="chip ok">report first, fix only after approval</span>
+          <span class="chip warn">never modifies files without consent</span>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="steps" style="margin-top:16px;">
+              <div class="step"><span class="step-n sn7">✓</span><div class="step-text"><strong>Context files</strong> — CLAUDE.md (has @imports?), AGENTS.md, steering docs (all three)</div></div>
+              <div class="step"><span class="step-n sn7">✓</span><div class="step-text"><strong>STATE.md coherence</strong> — exists? hash extracted → git log {hash}..HEAD → how many commits behind?</div></div>
+              <div class="step"><span class="step-n sn7">✓</span><div class="step-text"><strong>Orphaned specs</strong> — features in specs/ not marked implemented/abandoned in STATE.md</div></div>
+              <div class="step"><span class="step-n sn7">✓</span><div class="step-text"><strong>Metadata freshness</strong> — CHANGELOG, README, package.json last commit vs HEAD gap</div></div>
+              <div class="step"><span class="step-n sn7">✓</span><div class="step-text"><strong>Agent files</strong> — .claude/agents/ exists and populated?</div></div>
+            </div>
+          </div>
+          <div>
+            <button class="skill-btn sk7" onclick="openModal('checkup'); event.stopPropagation()" style="margin-top:16px;">
+              <div class="skill-icon">◎</div>
+              <div class="skill-meta">
+                <div class="skill-name">/sdd-checkup</div>
+                <div class="skill-hint">click to read SKILL.md</div>
+              </div>
+            </button>
+
+            <div class="code-block" style="margin-top:12px;"><span class="ck">── SDD HEALTH AUDIT ─────────────</span>
+
+<span class="cg">CONTEXT FILES</span>
+<span class="cv">  ✓  CLAUDE.md           present</span>
+<span class="cw">  ⚠  steering/tech.md   missing</span>
+<span class="cw">  ⚠  AGENTS.md          Cursor project</span>
+
+<span class="cg">STATE.MD</span>
+<span class="cw">  ⚠  STATE.md           4 commits behind</span>
+
+<span class="cg">SPECS</span>
+<span class="cv">  ✓  specs/auth/        implemented</span>
+<span class="cw">  ⚠  specs/queue/       unknown status</span>
+
+<span class="ck">── SUGGESTED FIXES ─────────────</span>
+<span class="cv">Critical: run /sdd-bootstrap</span>
+<span class="cv">Important: update STATE.md hash</span>
+<span class="cv">Optional:  resolve orphaned spec</span></div>
+          </div>
+        </div>
+
+        <div class="infobox purple" style="margin-top:16px;">
+          <strong>AGENTS.md detected:</strong> If checkup finds AGENTS.md but no CLAUDE.md, this is likely a Cursor project. Checkup will offer to convert: it reads AGENTS.md and generates CLAUDE.md + steering docs in SDD format, without losing any existing decisions.
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOTSTRAP -->
+    <div class="acc-card stripe-1" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <div class="acc-tag">E·02</div>
+        <div class="acc-meta">
+          <div class="acc-title">/sdd-bootstrap</div>
+          <div class="acc-desc">Reverse-engineers CLAUDE.md and steering docs from an existing codebase — never invents decisions</div>
+        </div>
+        <div class="acc-toggle">+</div>
+      </div>
+      <div class="acc-body">
+        <div class="chips">
+          <span class="chip ok">runs once per project</span>
+          <span class="chip ok">commit output before next session</span>
+          <span class="chip warn">no code written</span>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="steps" style="margin-top:16px;">
+              <div class="step"><span class="step-n sn1">01</span><div class="step-text"><strong>Clone and scan</strong> — run git log --oneline -10, ls -la. Understand what exists before opening Claude.</div></div>
+              <div class="step"><span class="step-n sn1">02</span><div class="step-text"><strong>Invoke /sdd-bootstrap</strong> — Claude scans folder structure, package files, config files, sample source.</div></div>
+              <div class="step"><span class="step-n sn1">03</span><div class="step-text"><strong>Answer questions</strong> — one at a time for anything ambiguous. Claude does not invent decisions.</div></div>
+              <div class="step"><span class="step-n sn1">04</span><div class="step-text"><strong>Approve 4 files</strong> — product.md, tech.md, structure.md, then CLAUDE.md (last, with @imports).</div></div>
+              <div class="step"><span class="step-n sn1">05</span><div class="step-text"><strong>Commit</strong> — "chore: add SDD context files"</div></div>
+            </div>
+          </div>
+          <div>
+            <button class="skill-btn sk1" onclick="openModal('bootstrap'); event.stopPropagation()" style="margin-top:16px;">
+              <div class="skill-icon">⚡</div>
+              <div class="skill-meta">
+                <div class="skill-name">/sdd-bootstrap</div>
+                <div class="skill-hint">click to read SKILL.md</div>
+              </div>
+            </button>
+
+            <div style="margin-top:12px; padding:14px; background:var(--surf2); border:1px solid var(--border); border-radius:3px;">
+              <div style="font-family:var(--mono); font-size:10px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-bottom:10px;">Output files</div>
+              <div style="display:flex; flex-direction:column; gap:6px; font-family:var(--mono); font-size:11px;">
+                <div style="color:var(--c1);">CLAUDE.md <span style="color:var(--mute2)">— stack · conventions · NEVER · @imports</span></div>
+                <div style="color:var(--c1);">.claude/steering/product.md</div>
+                <div style="color:var(--c1);">.claude/steering/tech.md</div>
+                <div style="color:var(--c1);">.claude/steering/structure.md</div>
+              </div>
+            </div>
+
+            <div class="infobox warn" style="margin-top:12px;">
+              <strong>Key constraint:</strong> CLAUDE.md must not duplicate content from steering docs. If context, rationale, or folder maps appear in CLAUDE.md — that's a sign the skill went wrong. Push back and ask it to move those to the appropriate steering doc.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATE.MD -->
+    <div class="acc-card stripe-4" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <div class="acc-tag">E·03</div>
+        <div class="acc-meta">
+          <div class="acc-title">STATE.md + Hash Anchor</div>
+          <div class="acc-desc">Generated on demand · never written manually · commit hash keeps it auditable</div>
+        </div>
+        <div class="acc-toggle">+</div>
+      </div>
+      <div class="acc-body">
+        <div class="two-col">
+          <div>
+            <div class="steps" style="margin-top:16px;">
+              <div class="step"><span class="step-n sn4">01</span><div class="step-text"><strong>Read STATE.md</strong> — extract the Last commit hash</div></div>
+              <div class="step"><span class="step-n sn4">02</span><div class="step-text"><strong>Run git log {hash}..HEAD --oneline</strong> — are there new commits?</div></div>
+              <div class="step"><span class="step-n sn4">03</span><div class="step-text"><strong>If messages are vague</strong> — read the diff to infer what actually changed</div></div>
+              <div class="step"><span class="step-n sn4">04</span><div class="step-text"><strong>Regenerate STATE.md</strong> — update hash to HEAD, mark features done/in-progress/abandoned</div></div>
+            </div>
+
+            <div class="infobox info" style="margin-top:12px;">
+              <strong>Why hash anchoring works with non-SDD peers:</strong> Even if a teammate pushes commits without updating STATE.md, the hash makes staleness objective — "are there commits after this hash?" is a yes/no question Claude can answer with git.
+            </div>
+          </div>
+          <div>
+            <div class="code-block" style="margin-top:16px;"><span class="ck"># State</span>
+<span class="cm">_Generated: YYYY-MM-DD_</span>
+<span class="cg">Last commit: `a3f9c12`</span>
+<span class="cm">_Valid until: next merge to main_</span>
+
+<span class="ck">## Done</span>
+<span class="cv">- auth — implemented</span>
+<span class="cv">  see specs/auth/</span>
+
+<span class="ck">## In Progress</span>
+<span class="cv">- queue-processor (T1-T3 done)</span>
+
+<span class="ck">## Blockers</span>
+<span class="cv">- none</span>
+
+<span class="ck">## Next Steps</span>
+<span class="cv">- complete T4, T5 for queue</span></div>
+
+            <div class="prompt">
+              <div class="prompt-lbl">Generate STATE.md prompt</div>
+              <div class="prompt-text">Read CLAUDE.md, steering docs, all specs/, and <em>git log --oneline -20</em>. Generate STATE.md: what's done, in progress, known issues, next steps. Include current HEAD hash.</div>
+            </div>
+
+            <div class="prompt" style="margin-top:8px;">
+              <div class="prompt-lbl">Update STATE.md prompt</div>
+              <div class="prompt-text">Read STATE.md, extract last commit hash. Run <em>git log {hash}..HEAD --oneline</em>. If there are new commits, read diffs and update STATE.md. Update hash to HEAD.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-actions">
+        <button class="modal-download" id="modal-download" onclick="downloadModalMarkdown()">↓ download .md</button>
+        <button class="modal-close" onclick="closeModal()">✕ close</button>
+      </div>
+    </div>
+    <div class="modal-body"><div id="modal-content"></div></div>
+  </div>
+</div>
+
+<script src="scripts/skills-data.js"></script>
+<script src="scripts/nav.js"></script>
+</body>
+</html>
