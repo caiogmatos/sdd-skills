@@ -57,9 +57,13 @@ function extractNavLinks(html) {
   const m = /<nav\b[^>]*\bclass\s*=\s*["']site-nav["'][^>]*>([\s\S]*?)<\/nav>/i.exec(html);
   if (!m) return null;
   const links = [];
-  const re = /<a\b[^>]*?\bhref\s*=\s*(?:"([^"]*)"|'([^']*)')/gi;
+  const re = /<a\b[^>]*?\bhref\s*=\s*(?:"([^"]*)"|'([^']*)')[^>]*>/gi;
   let a;
-  while ((a = re.exec(m[1]))) links.push(a[1] !== undefined ? a[1] : a[2]);
+  while ((a = re.exec(m[1]))) {
+    const cls = /\bclass\s*=\s*(?:"([^"]*)"|'([^']*)')/i.exec(a[0]);
+    if (cls && (cls[1] !== undefined ? cls[1] : cls[2]).split(/\s+/).includes('nav-brand')) continue;
+    links.push(a[1] !== undefined ? a[1] : a[2]);
+  }
   return links;
 }
 

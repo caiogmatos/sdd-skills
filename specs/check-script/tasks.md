@@ -165,7 +165,7 @@ b"`, `"é"`, `"C:\tools"` and a quoted list item.
   - Check: `node tools/check.js` then `node --test tools/test/check.test.js tools/test/html.test.js`
   - Covers: AC-14, AC-17
 
-- [ ] T10: Leave the nav brand link out of the nav list
+- [x] T10: Leave the nav brand link out of the nav list
   - Files: `tools/lib/consistency.js`, `tools/test/consistency.test.js`
   - Do:
     - Apply the "Brand link" rule under "Review fixes > consistency.js" in design.md: `extractNavLinks` skips any `<a>` whose class list contains `nav-brand`.

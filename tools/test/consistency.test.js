@@ -44,6 +44,17 @@ const nav = (hrefs) => `<nav class="site-nav"><ul>${hrefs.map((h) => `<li><a hre
 test('extractNavLinks', () => {
   assert.deepEqual(c.extractNavLinks(nav(['a.html', 'b.html'])), ['a.html', 'b.html']);
   assert.equal(c.extractNavLinks('<p>none</p>'), null);
+  const real = c.extractNavLinks(read('index.html'));
+  assert.equal(real.length, 7);
+  assert.equal(real.filter((h) => h === 'index.html').length, 1);
+});
+
+test('nav brand link is skipped but a duplicated list link is still reported', () => {
+  const html = '<nav class="site-nav"><a class="x nav-brand" href="a.html">B</a><a href="b.html" class="nav-brand">B</a><ul><li><a href="a.html">x</a></li><li><a href="a.html">x</a></li></ul></nav>';
+  assert.deepEqual(c.extractNavLinks(html), ['a.html', 'a.html']);
+  const pages = ['a.html'];
+  assert.ok(c.checkNav({ 'a.html': c.extractNavLinks(html) }, pages, 'a.html')
+    .some((p) => /duplicate nav link a\.html/.test(p.problem)));
 });
 
 test('checkNav', () => {
