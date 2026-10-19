@@ -159,3 +159,42 @@ test('CRLF is handled', () => {
   assert.deepEqual(p.errors, []);
   assert.equal(p.data.name.value, 'a');
 });
+
+test('list items get quoted-scalar rules', () => {
+  assert.equal(errs('---\ntools:\n  - "abc\n---\n')[0].line, 3);
+  assert.equal(errs('---\ntools:\n  - "abc" def\n---\n')[0].line, 3);
+  const p = parseFrontmatter('---\ntools:\n  - "a b"\n  - \'c\'\n---\n');
+  assert.deepEqual(p.errors, []);
+  assert.deepEqual(p.data.tools.value, ['a b', 'c']);
+});
+
+test('invalid double-quoted escapes', () => {
+  for (const v of ['"C:\\code"', '"C:\\Users"', '"\\xZZ"', '"\\u12"']) {
+    const e = errs(`---\nname: ${v}\n---\n`);
+    assert.equal(e.length, 1, v);
+    assert.equal(e[0].line, 2);
+    assert.match(e[0].message, /invalid escape/);
+    assert.match(e[0].message, /name/);
+  }
+});
+
+test('valid double-quoted escapes', () => {
+  const p = parseFrontmatter(
+    '---\na: "a\\nb"\nb: "\\u00e9"\nc: "C:\\\\tools"\nd: "\\x41\\t\\/"\ne: "é"\nf: "C:\\tools"\n---\n',
+  );
+  assert.deepEqual(p.errors, []);
+  assert.equal(p.data.a.value, 'a\nb');
+  assert.equal(p.data.b.value, 'é');
+  assert.equal(p.data.c.value, 'C:\\tools');
+  assert.equal(p.data.d.value, 'A\t/');
+  assert.equal(p.data.e.value, 'é');
+  assert.equal(p.data.f.value, 'C:\tools');
+});
+
+test('plain values starting with # or an indicator plus space', () => {
+  assert.equal(errs('---\ndescription: #1 tool\n---\n')[0].line, 2);
+  assert.equal(errs('---\ndescription: - foo\n---\n')[0].line, 2);
+  assert.equal(errs('---\ndescription: ? foo\n---\n')[0].line, 2);
+  assert.equal(errs('---\ndescription: ok\n  - foo\n---\n').length, 1);
+  assert.deepEqual(errs('---\ndescription: -foo\n---\n'), []);
+});

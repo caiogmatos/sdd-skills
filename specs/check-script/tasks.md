@@ -114,7 +114,7 @@ Read `requirements.md` and `design.md` in this folder first. Names, signatures, 
 <!-- GATE: Group 2 must be complete before Group 3 -->
 
 ## Group 3: PARALLEL (review fixes)
-- [ ] T7: Tighten the frontmatter value rules
+- [x] T7: Tighten the frontmatter value rules
   - Files: `tools/lib/frontmatter.js`, `tools/test/frontmatter.test.js`
   - Do:
     - Apply the "Review fixes > frontmatter.js" section of design.md:

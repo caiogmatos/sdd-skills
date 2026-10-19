@@ -2,8 +2,15 @@
 
 const INDICATORS = '[]{},&*!|>%@`';
 
+const SIMPLE_ESCAPES = {
+  0: '\0', a: '\x07', b: '\b', t: '\t', n: '\n', v: '\v', f: '\f', r: '\r',
+  e: '\x1b', ' ': ' ', '"': '"', '/': '/', '\\': '\\', N: '\x85', _: '\xa0',
+  L: ' ', P: ' ', '\t': '\t',
+};
+const HEX_ESCAPES = { x: 2, u: 4, U: 8 };
+
 /** Parse a quoted scalar at the start of s. Returns { value, rest } or { error }. */
-function parseQuoted(s) {
+function parseQuoted(s, key) {
   const q = s[0];
   let out = '';
   let i = 1;
@@ -11,14 +18,24 @@ function parseQuoted(s) {
     const c = s[i];
     if (q === '"' && c === '\\') {
       const n = s[i + 1];
-      if (n === '"' || n === '\\') {
-        out += n;
+      if (n !== undefined && Object.prototype.hasOwnProperty.call(SIMPLE_ESCAPES, n)) {
+        out += SIMPLE_ESCAPES[n];
         i += 2;
         continue;
       }
-      out += c;
-      i += 1;
-      continue;
+      if (n !== undefined && Object.prototype.hasOwnProperty.call(HEX_ESCAPES, n)) {
+        const len = HEX_ESCAPES[n];
+        const hex = s.slice(i + 2, i + 2 + len);
+        const cp = parseInt(hex, 16);
+        if (hex.length === len && /^[0-9a-fA-F]+$/.test(hex) && cp <= 0x10ffff) {
+          out += String.fromCodePoint(cp);
+          i += 2 + len;
+          continue;
+        }
+      }
+      return {
+        error: `invalid escape '\\${n === undefined ? '' : n}' in double-quoted value of '${key}'; use '\\\\' or single quotes`,
+      };
     }
     if (q === "'" && c === "'") {
       if (s[i + 1] === "'") {
@@ -38,6 +55,9 @@ function parseQuoted(s) {
 function plainProblem(text) {
   if (text.includes(': ') || text.includes(' #') || text.endsWith(':')) {
     return 'plain value contains ": " or " #" or ends with ":"; wrap it in double quotes';
+  }
+  if (text[0] === '#' || /^[-?:](\s|$)/.test(text)) {
+    return `plain value starts with '${text[0]}' which YAML reads as a comment or indicator; wrap it in double quotes`;
   }
   if (INDICATORS.includes(text[0])) {
     return `plain value starts with the YAML indicator '${text[0]}'; wrap it in double quotes`;
@@ -85,11 +105,22 @@ function parseFrontmatter(text) {
         const v = item[1].trim();
         if (v === '') err(line, 'empty list item');
         else {
-          if (!/^["']/.test(v)) {
+          if (/^["']/.test(v)) {
+            const q = parseQuoted(v, last.key);
+            if (q.error) {
+              err(line, `list item under '${last.key}': ${q.error}`);
+              last.entry.value.push(v);
+            } else {
+              if (q.rest.trim() !== '' && !/^\s+#/.test(q.rest)) {
+                err(line, `list item under '${last.key}': text after the closing quote`);
+              }
+              last.entry.value.push(q.value);
+            }
+          } else {
             const p = plainProblem(v);
             if (p) err(line, `list item under '${last.key}': ${p}`);
+            last.entry.value.push(v);
           }
-          last.entry.value.push(v);
         }
         continue;
       }
@@ -133,9 +164,9 @@ function parseFrontmatter(text) {
     }
 
     if (rest[0] === '"' || rest[0] === "'") {
-      const q = parseQuoted(rest);
+      const q = parseQuoted(rest, key);
       if (q.error) {
-        err(line, `key '${key}': ${q.error}`);
+        err(line, q.error.startsWith('invalid') ? q.error : `key '${key}': ${q.error}`);
         last = null;
         continue;
       }
