@@ -2,7 +2,7 @@
 Static HTML · CSS · vanilla JS · no build step · GitHub Pages from `main`
 
 # Commands
-- Test: none yet (planned: Node check script, built-ins only)
+- Test: `node tools/check.js` (site check) and `node --test` (checker's own tests)
 - Run: open any .html from disk, or `python -m http.server` to load unpushed files
 - Deploy: `git push` to main (Pages rebuilds in about a minute)
 

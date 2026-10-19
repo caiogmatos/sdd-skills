@@ -17,6 +17,10 @@ sdd-skills/
 ├── agents/<name>.md        The two subagents (source of truth)
 ├── templates/CLAUDE.md     Global CLAUDE.md template (source of truth)
 ├── favicon.svg / .png      Robot icon (PNG is the 32px fallback)
+├── tools/
+│   ├── check.js            Site check entry point (node tools/check.js)
+│   ├── lib/                Check modules (frontmatter, render, HTML, consistency)
+│   └── test/               node:test tests for the checker
 └── .nojekyll               Keeps GitHub Pages from running Jekyll
 ```
 
@@ -24,7 +28,7 @@ sdd-skills/
 - **Pages**: every page repeats the same `<head>` (charset, viewport, title `X — SDD`, favicons, `styles.css`), the same 7-link `<nav class="site-nav">`, and ends with `scripts/skills-data.js` then `scripts/nav.js`. Adding a page means updating the nav on all pages.
 - **Components**: `.accordion` › `.acc-card` (`.acc-header`, `.acc-tag`, `.acc-meta`, `.acc-body`), `.steps` › `.step`, `.chips`, `.infobox`, `.code-block`, `.cmd` + `.copy-btn`, `.skill-btn`, `.ref-table`, `.parallel-card`. Colour variants are numbered 0–7 (`--c0`…`--c7`) with a per-component prefix (`stripe-N`, `skN`, `snN`, `pN`, `tN`, `ncN`, `scN`). Status variants are `ok`, `warn`, `info`, `purple`.
 - **Modal**: injected by `nav.js` on every page. `openModal('<key>')` looks the key up in `SDD_FILES`.
-- **Tests and config**: none, apart from `.nojekyll`.
+- **Tests and config**: the check script and its tests live in `tools/`. The only config file is `.nojekyll`.
 
 ## Paths that other code depends on
 Renaming or adding a skill, agent or template means updating all of these:
@@ -33,3 +37,4 @@ Renaming or adding a skill, agent or template means updating all of these:
 3. `openModal('<key>')` calls on the pages.
 4. Prose and directory trees on `index.html`, `global.html`, `skills.html` and `agents.html`.
 5. Links inside the skills to `global.html`.
+6. `tools/lib/consistency.js` depends on `id="install-ps"` and `id="install-sh"` in `global.html` and on the `site-nav` markup.

@@ -13,7 +13,7 @@
 | Install | Commands on `global.html` (PowerShell and sh) download skills and agents from `raw.githubusercontent.com/.../main`. They don't install `templates/CLAUDE.md`. | inferred from code |
 | External resources | Google Fonts only (IBM Plex Mono, Space Grotesk, via `@import` in `styles.css`). No third-party JavaScript. | inferred from code |
 | Theme | Dark only. Colour tokens on `:root`, no `prefers-color-scheme` handling. | inferred from code |
-| Automated checks | A Node script using only Node built-in modules: no `package.json`, no dependencies. Not written yet. | confirmed by user |
+| Automated checks | A Node script using only Node built-in modules: no `package.json`, no dependencies. Implemented in `tools/check.js`, with `node:test` tests in `tools/test/`. | confirmed by user |
 | Markup direction | New styling goes into `styles.css` as classes and new behaviour into `nav.js` listeners. Existing inline `style=""` and `onclick` are migrated to classes and listeners over time. | confirmed by user |
 
 ## Rejected alternatives
@@ -21,7 +21,7 @@
 - **Embedding skill text in JavaScript**: the original site did this. It was replaced by fetching the real files, so downloads are exact and there is one source of truth. *(inferred from git history)*
 
 ## Commands
-- **Test**: none yet. Planned: a Node built-ins check script (frontmatter parses as YAML, every content file renders, every page has balanced tags).
+- **Test**: `node tools/check.js` (site check) and `node --test` (checker's own tests).
 - **Run locally**: open any `.html` file from disk (the viewer falls back to GitHub), or serve the folder with `python -m http.server` to load local, unpushed files.
 - **Deploy**: `git push` to `main`. GitHub Pages rebuilds in about a minute.
 

@@ -96,7 +96,7 @@ Read `requirements.md` and `design.md` in this folder first. Names, signatures, 
   - Check: `node tools/check.js` then `node --test`
   - Covers: AC-1, AC-2, AC-3, AC-4, AC-5, AC-16, AC-21
 
-- [ ] T6: Document the check command
+- [x] T6: Document the check command
   - Files: `CLAUDE.md`, `.claude/steering/tech.md`, `.claude/steering/structure.md`
   - Do:
     - **CLAUDE.md:** replace the Test line under `# Commands` with `` - Test: `node tools/check.js` (site check) and `node --test` (checker's own tests) ``.
