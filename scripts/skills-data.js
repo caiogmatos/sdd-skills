@@ -59,3 +59,4 @@ window.SDD_FILES = {
 };
 
 window.SDD_REPO_URL = 'https://github.com/caiogmatos/sdd-skills';
+window.SDD_RAW_URL = 'https://raw.githubusercontent.com/caiogmatos/sdd-skills/main';

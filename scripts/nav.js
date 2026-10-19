@@ -57,11 +57,21 @@ const fileCache = {};
 let modalFile = null;
 let modalRequest = 0;
 
+async function fetchText(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
+  return response.text();
+}
+
+// Loads from the site itself; a page opened from disk can't fetch local
+// files, so that case falls back to the copy published on GitHub.
 async function loadFile(path) {
   if (!(path in fileCache)) {
-    const response = await fetch(path);
-    if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
-    fileCache[path] = await response.text();
+    if (location.protocol === 'file:') {
+      fileCache[path] = { text: await fetchText(`${window.SDD_RAW_URL}/${path}`), fromGitHub: true };
+    } else {
+      fileCache[path] = { text: await fetchText(path), fromGitHub: false };
+    }
   }
   return fileCache[path];
 }
@@ -85,21 +95,20 @@ async function openModal(key) {
   document.getElementById('modal').classList.add('open');
 
   try {
-    const text = await loadFile(file.path);
+    const loaded = await loadFile(file.path);
     if (request !== modalRequest) return;
-    content.innerHTML = `<div class="skill-content">${renderMarkdown(text)}</div>`;
-    modalFile = { ...file, text };
+    const origin = loaded.fromGitHub
+      ? '<div class="note" style="margin:0 0 14px;">Opened from disk, so this shows the version published on GitHub, not your local copy.</div>'
+      : '';
+    content.innerHTML = `<div class="skill-content">${origin}${renderMarkdown(loaded.text)}</div>`;
+    modalFile = { ...file, text: loaded.text };
     setModalActions(true);
   } catch (error) {
     if (request !== modalRequest) return;
-    const fromDisk = location.protocol === 'file:';
-    const reason = fromDisk
-      ? 'This page was opened straight from disk, so the browser blocks it from loading other files.'
-      : `It couldn't be loaded (${escapeHtml(error.message)}).`;
     const githubUrl = `${window.SDD_REPO_URL}/blob/main/${file.path}`;
-    content.innerHTML = `<div class="skill-content"><div class="note">${reason}
-      Read it on GitHub: <a href="${githubUrl}" target="_blank" rel="noopener">${file.path}</a>${fromDisk
-        ? ', or serve this folder locally, for example with <code>python -m http.server</code>.' : '.'}</div></div>`;
+    content.innerHTML = `<div class="skill-content"><div class="note">This file couldn't be loaded
+      (${escapeHtml(error.message)}). Read it on GitHub:
+      <a href="${githubUrl}" target="_blank" rel="noopener">${file.path}</a>.</div></div>`;
   }
 }
 
@@ -118,12 +127,18 @@ function copyModalFile() {
   copyText(modalFile.text, document.getElementById('modal-copy'));
 }
 
+function flashLabel(button, message) {
+  const label = button.dataset.label || button.textContent;
+  button.dataset.label = label;
+  button.textContent = message;
+  setTimeout(() => { button.textContent = label; }, 1500);
+}
+
 function copyText(text, button) {
-  navigator.clipboard.writeText(text).then(() => {
-    const label = button.textContent;
-    button.textContent = 'copied ✓';
-    setTimeout(() => { button.textContent = label; }, 1500);
-  });
+  navigator.clipboard.writeText(text).then(
+    () => flashLabel(button, 'copied ✓'),
+    () => flashLabel(button, 'copy blocked')
+  );
 }
 
 function closeModal() {
