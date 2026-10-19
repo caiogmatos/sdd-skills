@@ -6,6 +6,18 @@ const { loadRenderer, checkRender, lintMarkdown } = require('./lib/markdown.js')
 const { checkTags, checkPageHead, countInlineAttrs } = require('./lib/html.js');
 const C = require('./lib/consistency.js');
 
+// Like fs.existsSync, but every path segment must match the on-disk name exactly.
+function existsExactCase(root, rel) {
+  let dir = root;
+  for (const seg of String(rel).split(/[\\/]+/).filter(Boolean)) {
+    let names;
+    try { names = fs.readdirSync(dir); } catch (e) { return false; }
+    if (!names.includes(seg)) return false;
+    dir = path.join(dir, seg);
+  }
+  return true;
+}
+
 function runChecks(root) {
   const problems = [];
   let files = 0;
@@ -43,8 +55,14 @@ function runChecks(root) {
   // Content files
   const content = [];
   const skillFolders = list('skills').filter((d) => d.isDirectory()).map((d) => d.name).sort();
+  const skillNames = [];
   for (const f of skillFolders) {
-    if (fs.existsSync(path.join(root, 'skills', f, 'SKILL.md'))) content.push({ rel: `skills/${f}/SKILL.md`, kind: 'skill', name: f });
+    if (existsExactCase(root, `skills/${f}/SKILL.md`)) {
+      skillNames.push(f);
+      content.push({ rel: `skills/${f}/SKILL.md`, kind: 'skill', name: f });
+    } else {
+      err(`skills/${f}`, 'folder has no SKILL.md');
+    }
   }
   const agentNames = [];
   for (const d of list('agents')) {
@@ -102,7 +120,7 @@ function runChecks(root) {
     guard('scripts/skills-data.js', () => {
       const existing = [];
       for (const v of Object.values(registry)) {
-        if (v && typeof v.path === 'string' && fs.existsSync(path.join(root, v.path))) existing.push(v.path);
+        if (v && typeof v.path === 'string' && existsExactCase(root, v.path)) existing.push(v.path);
       }
       add('scripts/skills-data.js', C.checkRegistry(registry, existing, content.map((c) => c.rel)));
     });
@@ -120,7 +138,7 @@ function runChecks(root) {
   });
   if (globalHtml !== null) {
     guard('global.html', () => {
-      add('global.html', C.checkInstallCommands(C.parseInstallNames(globalHtml), skillFolders, agentNames));
+      add('global.html', C.checkInstallCommands(C.parseInstallNames(globalHtml), skillNames, agentNames));
     });
   }
 

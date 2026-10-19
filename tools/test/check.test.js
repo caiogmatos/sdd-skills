@@ -102,3 +102,32 @@ test('runs from another cwd', () => {
   assert.equal(r.status, 0, r.stdout + r.stderr);
   assert.match(r.stdout, /^check: \d+ files, 0 errors, \d+ warnings$/m);
 });
+
+test('skill folder with Skill.md instead of SKILL.md is an error', () => {
+  const root = makeRepo({
+    'skills/sdd-x/Skill.md': '---\nname: sdd-x\ndescription: d\n---\nBody\n',
+    'index.html': page(''),
+  });
+  try {
+    const r = run({ SDD_CHECK_ROOT: root });
+    assert.equal(r.status, 1, r.stdout);
+    assert.match(r.stdout, /^skills\/sdd-x: folder has no SKILL\.md$/m);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('registry path differing only in case is reported as missing', () => {
+  const root = makeRepo({
+    'agents/sdd-x.md': '---\nname: sdd-x\ndescription: d\ntools: Read\nmodel: sonnet\n---\nBody\n',
+    'index.html': page(''),
+  });
+  write(root, 'scripts/skills-data.js', "window.SDD_FILES = { 'sdd-x': { path: 'agents/SDD-X.md' } };\n");
+  try {
+    const r = run({ SDD_CHECK_ROOT: root });
+    assert.equal(r.status, 1, r.stdout);
+    assert.match(r.stdout, /points to missing agents\/SDD-X\.md/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});

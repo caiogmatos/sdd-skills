@@ -124,6 +124,8 @@ function checkTags(html) {
         problems.push({ line: t.line, message: `misnested </${t.name}>; <${open.name}> opened at line ${open.line} is still open` });
         stack.length = idx;
       }
+    } else if (t.selfClose && stack.some((s) => s.name === 'svg' || s.name === 'math')) {
+      // foreign content: <x/> closes itself
     } else if (VOID.has(t.name)) {
       // never pushed
     } else if (t.selfClose) {

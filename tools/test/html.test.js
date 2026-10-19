@@ -95,3 +95,16 @@ test('countInlineAttrs counts style and on* attributes', () => {
   assert.deepEqual(countInlineAttrs(html), { style: 2, on: 2 });
   assert.deepEqual(countInlineAttrs('<p class="a">x</p>'), { style: 0, on: 0 });
 });
+
+test('self-closing tags inside inline svg are allowed', () => {
+  assert.deepEqual(checkTags('<svg><path d="M0 0"/></svg>'), []);
+});
+
+test('self-closing div outside svg is still an error', () => {
+  assert.equal(checkTags('<div/>').length > 0, true);
+});
+
+test('HTML rules apply again after </svg>', () => {
+  const p = checkTags('<svg><path d="M0 0"/></svg><div/>');
+  assert.ok(p.some((x) => /self-closing/.test(x.message)));
+});

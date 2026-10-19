@@ -146,7 +146,7 @@ b"`, `"é"`, `"C:\tools"` and a quoted list item.
   - Check: `node --test tools/test/consistency.test.js`
   - Covers: AC-18, AC-19
 
-- [ ] T9: Exact-case paths, missing SKILL.md and inline SVG
+- [x] T9: Exact-case paths, missing SKILL.md and inline SVG
   - Files: `tools/check.js`, `tools/test/check.test.js`, `tools/lib/html.js`, `tools/test/html.test.js`
   - Do:
     - Apply the "Review fixes > check.js and html.js" section of design.md:
