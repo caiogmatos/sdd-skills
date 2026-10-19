@@ -15,7 +15,7 @@ Read `requirements.md` and `design.md` in this folder first. Names, signatures, 
   - Check: `node --test tools/test/frontmatter.test.js`
   - Covers: AC-6, AC-7, AC-8, AC-9, AC-10, AC-21
 
-- [ ] T2: Build the renderer loader, render check and Markdown lint
+- [x] T2: Build the renderer loader, render check and Markdown lint
   - Files: `tools/lib/markdown.js`, `tools/test/markdown.test.js`
   - Do:
     - Implement `loadRenderer(navJsSource)`, `checkRender(render, text)` and `lintMarkdown(text, bodyStartLine)`, following the "tools/lib/markdown.js" section of design.md.
