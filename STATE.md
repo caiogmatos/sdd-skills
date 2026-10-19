@@ -7,10 +7,11 @@ Last commit: `a1cdfe0`
 - Skills and agents reworked around subagents (before SDD; no specs)
 
 ## In progress
+- check-script: implemented, awaiting validation (`/sdd-validate check-script`)
 
 ## Blockers
 - none
 
 ## Next steps
-- Spec a Node check script (built-ins only): `/sdd-feature check-script`
+- Validate the check script: `/sdd-validate check-script`
 - Migrate inline `style=""` and `onclick` to classes and listeners, page by page
