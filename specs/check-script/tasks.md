@@ -110,3 +110,57 @@ Read `requirements.md` and `design.md` in this folder first. Names, signatures, 
       - Note that `tools/lib/consistency.js` depends on `id="install-ps"` and `id="install-sh"` in `global.html` and on the `site-nav` markup. Add it as item 6 under "Paths that other code depends on".
   - Check: `grep -q "node tools/check.js" CLAUDE.md && grep -q "node tools/check.js" .claude/steering/tech.md && grep -q "tools/" .claude/steering/structure.md && ! grep -qi "none yet" CLAUDE.md .claude/steering/tech.md`
   - Covers: AC-22
+
+<!-- GATE: Group 2 must be complete before Group 3 -->
+
+## Group 3: PARALLEL (review fixes)
+- [ ] T7: Tighten the frontmatter value rules
+  - Files: `tools/lib/frontmatter.js`, `tools/test/frontmatter.test.js`
+  - Do:
+    - Apply the "Review fixes > frontmatter.js" section of design.md:
+      - list items parsed like `key: value`
+      - the YAML escape set in double-quoted values
+      - plain values or continuation lines starting with `#`, `- `, `? ` or `: `
+    - Tests:
+      - A failing case for each new error: an unclosed quote in a list item, text after the closing quote in a list item, `"C:	ools"`, `description: #1 tool`, `description: - foo`.
+      - Passing cases for `"a
+b"`, `"é"`, `"C:\tools"` and a quoted list item.
+      - The existing positive tests still pass.
+  - Check: `node --test tools/test/frontmatter.test.js`
+  - Covers: AC-7, AC-8
+
+- [ ] T8: Close the nav and modal-key gaps
+  - Files: `tools/lib/consistency.js`, `tools/test/consistency.test.js`, `.claude/steering/structure.md`
+  - Do:
+    - Apply the "Review fixes > consistency.js" section of design.md:
+      - `data-modal` keys in `findOpenModalKeys`
+      - duplicate, order, dead-link and missing-reference rules in `checkNav`
+    - In structure.md item 6, add that modal keys are read from `openModal('...')` calls and `data-modal` attributes.
+    - Tests:
+      - A `data-modal="reveiwer"` key is reported as unknown, and a valid `data-modal` key passes.
+      - A repeated nav link is reported.
+      - The order is reported when the lengths differ.
+      - A nav link to a page that isn't in `pages` is reported.
+      - A missing index.html gives the "could not be compared" problem.
+      - The existing tests still pass.
+  - Check: `node --test tools/test/consistency.test.js`
+  - Covers: AC-18, AC-19
+
+- [ ] T9: Exact-case paths, missing SKILL.md and inline SVG
+  - Files: `tools/check.js`, `tools/test/check.test.js`, `tools/lib/html.js`, `tools/test/html.test.js`
+  - Do:
+    - Apply the "Review fixes > check.js and html.js" section of design.md:
+      - `existsExactCase` for `SKILL.md` discovery and registry paths
+      - the `folder has no SKILL.md` error
+      - SVG/MathML self-closing in `checkTags`
+    - Tests:
+      - **html.test.js:**
+        - `<svg><path d="M0 0"/></svg>` gives no problems.
+        - `<div/>` outside SVG is still an error.
+        - A tag after `</svg>` follows the HTML rules again.
+      - **check.test.js:**
+        - A fixture skill folder with `Skill.md` instead of `SKILL.md` gives the `folder has no SKILL.md` error.
+        - A registry entry whose path differs only in case is reported as missing.
+        - The real repo still passes.
+  - Check: `node tools/check.js` then `node --test tools/test/check.test.js tools/test/html.test.js`
+  - Covers: AC-14, AC-17

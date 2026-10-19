@@ -228,3 +228,27 @@ The test command is `node --test`, run from the repo root with no arguments. It 
 - **AC-17 to AC-20:** consistency.test.js has one test per problem: missing path, unregistered file, unknown key, `toString` key, nav mismatch, page missing from nav, missing nav, and a missing or extra install name in each shell, each with a positive case.
 - **AC-21:** `node --test` exits 0.
 - **AC-22:** `grep -n "node tools/check.js" CLAUDE.md .claude/steering/tech.md`, plus `grep -c "none yet" CLAUDE.md .claude/steering/tech.md`, which must report 0 for both.
+
+## Review fixes
+
+Added after `/code-review` of the first implementation (b3a2a70..1d5d682). Each item tightens a check so that a real mistake can't pass. Where this section and the sections above disagree, this one wins.
+
+### frontmatter.js (AC-7, AC-8)
+- **List items get the same value rules as `key: value`.** A quoted item goes through the quoted-scalar parser, so an unterminated quote or text after the closing quote is an error. A plain item goes through the plain-scalar rules.
+- **Double-quoted escapes are limited to the YAML set.** That set is `\0 \a \b \t \n \v \f \r \e \<space> \" \/ \ \N \_ \L \P`, a backslash before a tab character, `\xHH`, `\uHHHH` and `\UHHHHHHHH`. Any other escape is an error: `invalid escape '\c' in double-quoted value of '<key>'; use '\' or single quotes`.
+- **More plain values that must be quoted.** A plain value, or a continuation line, that starts with `#` is an error, because YAML reads it as a comment. So is one that starts with `-`, `?` or `:` followed by a space or the end of the line. The message names the key and suggests quoting it.
+
+### consistency.js (AC-18, AC-19)
+- **`findOpenModalKeys`** also matches `data-modal="<key>"` and `data-modal='<key>'` attributes. That is the convention for the planned `onclick` migration: a `.skill-btn` gets `data-modal`, and a listener in `nav.js` calls `openModal(el.dataset.modal)`. Both forms are checked against `SDD_FILES`.
+- **`checkNav`:**
+  - **Duplicate href:** a page whose list contains an href twice gets `duplicate nav link <href>`.
+  - **Order:** the order check runs whenever the page has no missing, extra or duplicate links, whatever the list lengths.
+  - **Dead link:** each href in the reference list that is a relative `.html` link, after dropping `#…` and `?…`, must be one of `pages`. Otherwise it is reported on the reference page: `nav link <href> points to a page that does not exist`.
+  - **Missing reference page:** if `referencePage` is not in `pages`, the result is one problem on it: `<referencePage> is missing, so the nav could not be compared`.
+
+### check.js and html.js (AC-14, AC-17)
+- **Exact-case existence.**
+  - A helper `existsExactCase(root, rel)` walks each path segment and compares names with `fs.readdirSync` entries exactly. This catches `Skill.md` vs `SKILL.md` on Windows and macOS, where `fs.existsSync` ignores letter case but GitHub Pages doesn't.
+  - It is used for `SKILL.md` discovery and for the registry's existing paths.
+- **A skill folder without `SKILL.md`** (exact case) is an error on `skills/<folder>`: `folder has no SKILL.md`. The folder is not counted as a skill for `checkInstallCommands`.
+- **Foreign content in `checkTags`.** Inside an `<svg>` or `<math>` element, `<x/>` closes itself and is not an error. Outside them, the void and non-void rules stay as they are.
