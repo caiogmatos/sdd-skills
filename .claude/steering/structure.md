@@ -1,4 +1,5 @@
 # Structure
+<!-- updated: check-script -->
 
 ```text
 sdd-skills/
@@ -25,16 +26,18 @@ sdd-skills/
 ```
 
 ## Where things live
+<!-- updated: check-script -->
 - **Pages**: every page repeats the same `<head>` (charset, viewport, title `X — SDD`, favicons, `styles.css`), the same 7-link `<nav class="site-nav">`, and ends with `scripts/skills-data.js` then `scripts/nav.js`. Adding a page means updating the nav on all pages.
 - **Components**: `.accordion` › `.acc-card` (`.acc-header`, `.acc-tag`, `.acc-meta`, `.acc-body`), `.steps` › `.step`, `.chips`, `.infobox`, `.code-block`, `.cmd` + `.copy-btn`, `.skill-btn`, `.ref-table`, `.parallel-card`. Colour variants are numbered 0–7 (`--c0`…`--c7`) with a per-component prefix (`stripe-N`, `skN`, `snN`, `pN`, `tN`, `ncN`, `scN`). Status variants are `ok`, `warn`, `info`, `purple`.
-- **Modal**: injected by `nav.js` on every page. `openModal('<key>')` looks the key up in `SDD_FILES`.
+- **Modal**: injected by `nav.js` on every page. `openModal('<key>')` looks the key up in `SDD_FILES`. When the `onclick` handlers are migrated, a modal button carries `data-modal="<key>"` and a `nav.js` listener calls `openModal`; the check reads both forms.
 - **Tests and config**: the check script and its tests live in `tools/`. The only config file is `.nojekyll`.
 
 ## Paths that other code depends on
+<!-- updated: check-script -->
 Renaming or adding a skill, agent or template means updating all of these:
 1. `scripts/skills-data.js`: the `path`, `download` and `installTo` entries.
 2. `global.html`: the PowerShell and sh install commands (skill names, `skills/sdd-$n/SKILL.md`, agent names, `agents/$a.md`).
 3. `openModal('<key>')` calls on the pages. The check reads modal keys from `openModal('...')` calls and `data-modal` attributes.
 4. Prose and directory trees on `index.html`, `global.html`, `skills.html` and `agents.html`.
 5. Links inside the skills to `global.html`.
-6. `tools/lib/consistency.js` depends on `id="install-ps"` and `id="install-sh"` in `global.html` and on the `site-nav` markup.
+6. `tools/lib/consistency.js` depends on `id="install-ps"` and `id="install-sh"` in `global.html` and on the `site-nav` markup, where the `nav-brand` link is left out of the nav comparison.

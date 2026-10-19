@@ -122,9 +122,8 @@ Read `requirements.md` and `design.md` in this folder first. Names, signatures, 
       - the YAML escape set in double-quoted values
       - plain values or continuation lines starting with `#`, `- `, `? ` or `: `
     - Tests:
-      - A failing case for each new error: an unclosed quote in a list item, text after the closing quote in a list item, `"C:	ools"`, `description: #1 tool`, `description: - foo`.
-      - Passing cases for `"a
-b"`, `"é"`, `"C:\tools"` and a quoted list item.
+      - A failing case for each new error: an unclosed quote in a list item, text after the closing quote in a list item, `"C:\code"` and `"C:\Users"` (invalid escapes), `description: #1 tool`, `description: - foo`.
+      - Passing cases for `"a\nb"`, `"\u00e9"`, `"C:\tools"` (`\t` is a valid escape) and a quoted list item.
       - The existing positive tests still pass.
   - Check: `node --test tools/test/frontmatter.test.js`
   - Covers: AC-7, AC-8
