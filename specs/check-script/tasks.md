@@ -48,7 +48,7 @@ Read `requirements.md` and `design.md` in this folder first. Names, signatures, 
   - Check: `node --test tools/test/html.test.js`
   - Covers: AC-14, AC-15, AC-16, AC-21
 
-- [ ] T4: Build the cross-file consistency checks
+- [x] T4: Build the cross-file consistency checks
   - Files: `tools/lib/consistency.js`, `tools/test/consistency.test.js`
   - Do:
     - Implement the following, following the "tools/lib/consistency.js" section of design.md:
