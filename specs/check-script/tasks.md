@@ -164,3 +164,13 @@ b"`, `"é"`, `"C:\tools"` and a quoted list item.
         - The real repo still passes.
   - Check: `node tools/check.js` then `node --test tools/test/check.test.js tools/test/html.test.js`
   - Covers: AC-14, AC-17
+
+- [ ] T10: Leave the nav brand link out of the nav list
+  - Files: `tools/lib/consistency.js`, `tools/test/consistency.test.js`
+  - Do:
+    - Apply the "Brand link" rule under "Review fixes > consistency.js" in design.md: `extractNavLinks` skips any `<a>` whose class list contains `nav-brand`.
+    - Tests:
+      - `extractNavLinks` on the real `index.html` returns 7 hrefs, with `index.html` exactly once.
+      - A nav with a brand link plus a duplicated `<li>` link is still reported as a duplicate.
+  - Check: `node --test tools/test/consistency.test.js`, and `node tools/check.js` reports no `duplicate nav link` errors
+  - Covers: AC-19

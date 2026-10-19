@@ -244,6 +244,7 @@ Added after `/code-review` of the first implementation (b3a2a70..1d5d682). Each 
   - **Duplicate href:** a page whose list contains an href twice gets `duplicate nav link <href>`.
   - **Order:** the order check runs whenever the page has no missing, extra or duplicate links, whatever the list lengths.
   - **Dead link:** each href in the reference list that is a relative `.html` link, after dropping `#…` and `?…`, must be one of `pages`. Otherwise it is reported on the reference page: `nav link <href> points to a page that does not exist`.
+  - **Brand link:** `extractNavLinks` skips the `<a class="nav-brand">` link. It points to index.html on every page, alongside the Home link, so it would otherwise always count as a duplicate.
   - **Missing reference page:** if `referencePage` is not in `pages`, the result is one problem on it: `<referencePage> is missing, so the nav could not be compared`.
 
 ### check.js and html.js (AC-14, AC-17)
