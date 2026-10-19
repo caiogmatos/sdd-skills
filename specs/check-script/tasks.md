@@ -33,7 +33,7 @@ Read `requirements.md` and `design.md` in this folder first. Names, signatures, 
   - Check: `node --test tools/test/markdown.test.js`
   - Covers: AC-11, AC-12, AC-13, AC-21
 
-- [ ] T3: Build the HTML tag balance, page head and inline attribute checks
+- [x] T3: Build the HTML tag balance, page head and inline attribute checks
   - Files: `tools/lib/html.js`, `tools/test/html.test.js`
   - Do:
     - Implement `checkTags(html)`, `checkPageHead(html)` and `countInlineAttrs(html)`, following the "tools/lib/html.js" section of design.md.
