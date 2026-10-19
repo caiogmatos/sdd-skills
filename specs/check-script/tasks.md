@@ -73,7 +73,7 @@ Read `requirements.md` and `design.md` in this folder first. Names, signatures, 
 <!-- GATE: Group 1 must be complete before Group 2 -->
 
 ## Group 2: PARALLEL
-- [ ] T5: Wire up tools/check.js and make the real repo pass
+- [x] T5: Wire up tools/check.js and make the real repo pass
   - Files: `tools/check.js`, `tools/test/check.test.js`, plus any content file or page that the first run reports an error in (expected: none)
   - Do:
     - Implement `runChecks(root)` and the CLI branch, following the "tools/check.js" and "Data flow" sections of design.md:
